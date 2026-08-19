@@ -1,7 +1,7 @@
 # Story Template
 
 > Owner: `ba` agent · Path: `docs/stories/<epic-slug>/NN-<slug>-<type>.md`  
-> AC format aligns with `reference/agents/ba.agent.md` (Gherkin Markdown table).
+> AC format aligns with `docs/team/ba.agent.md` (Gherkin Markdown table).
 
 | Field | Value |
 |---|---|

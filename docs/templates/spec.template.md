@@ -1,6 +1,6 @@
 # Spec Template
 
-> Owner: `architect` agent · Path: `docs/specs/<epic-key>.md`
+> Owner: whoever writes the technical spec (no dedicated `architect` agent ships in this kit) · Path: `docs/specs/<epic-key>.md`
 
 ## Meta
 
@@ -25,30 +25,30 @@
 {}
 ```
 
-## 3. Postgres model
+## 3. Data model (adjust to this project's persistence choice per project-context)
 
-### Tables
+### Tables / collections
 
-| Table | Columns | PK | FKs | Indexes |
+| Table/collection | Columns/fields | PK | FKs | Indexes |
 |---|---|---|---|---|
 | | | | | |
 
 ### Migration notes
 
-- Flyway version:
+- Migration tool + version:
 - Backward compatible? Y/N
 
-## 4. Redis
+## 4. Cache (if applicable)
 
 | Key pattern | Type | TTL | Invalidation |
 |---|---|---|---|
-| `app:...` | | | |
+| | | | |
 
-## 5. Kafka
+## 5. Async / eventing (if applicable)
 
-| Topic | Key | Producer | Consumer | Ordering | DLQ |
+| Topic/queue | Key | Producer | Consumer | Ordering | DLQ |
 |---|---|---|---|---|---|
-| `domain.context.event.v1` | | | | | |
+| | | | | | |
 
 ## 6. Frontend impact
 

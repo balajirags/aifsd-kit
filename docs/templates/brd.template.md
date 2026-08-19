@@ -1,6 +1,6 @@
 # BRD Template
 
-> Owner: `brd` agent · Path: `docs/brd/<epic-slug>.md`
+> Owner: whoever grooms the epic (no dedicated `brd` agent ships in this kit) · Path: `docs/brd/<epic-slug>.md`
 
 ## Meta
 

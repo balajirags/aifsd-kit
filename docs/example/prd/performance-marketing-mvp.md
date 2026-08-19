@@ -1,5 +1,5 @@
 # Performance Marketing Platform — MVP
-> Owner: `prd` agent · Path: `docs/prd/performance-marketing-mvp.md`
+> Example PRD, per `docs/templates/prd.template.md` · Path: `docs/example/prd/performance-marketing-mvp.md`
 
 ## Meta
 

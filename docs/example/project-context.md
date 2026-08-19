@@ -2,7 +2,7 @@
 
 ## What We Are Building
 
-Understand the product and its context from prd file @`docs/prd/performance-marketing-mvp.md`.
+Understand the product and its context from prd file @`docs/example/prd/performance-marketing-mvp.md`.
 
 <!-- Customize: one-paragraph product description -->
 A fullstack application with a React SPA frontend and a Spring Boot API backend. PostgreSQL is the system of record; Redis is used for caching/short-lived state; Kafka carries domain events between services.
@@ -24,6 +24,16 @@ A fullstack application with a React SPA frontend and a Spring Boot API backend.
 | Resilience | Resilience4j |
 | BE tests | JUnit 5, Mockito, AssertJ, Testcontainers |
 | FE tests | Vitest, Playwright (E2E) |
+
+## Delivery Tracker
+
+| Field | Value |
+|---|---|
+| Tracker | Local docs (`docs/epics/`, `docs/stories/`) |
+| Jira project key | n/a |
+| GitHub repo | n/a |
+
+This pilot has no Jira/GitHub tracker set up yet — Epics and Stories live entirely under `docs/epics/` and `docs/stories/<epic-slug>/`. Switch to `Jira` or `GitHub Issues` here once one is adopted; `ba.agent` will start writing there plus a markdown mirror.
 
 ## Architecture
 
@@ -58,6 +68,29 @@ A fullstack application with a React SPA frontend and a Spring Boot API backend.
 - Kafka topics: `domain.context.eventName.v1`
 - Redis keys: `app:<bounded-context>:<entity>:<id>`
 - FE components: PascalCase; hooks: `use*` prefix
+
+## Commands
+
+### Backend
+
+| Purpose | Command |
+|---|---|
+| Compile | `./gradlew compileJava --no-daemon` |
+| Static analysis / lint | `./gradlew pmdMain spotbugsMain --no-daemon` |
+| Unit tests + coverage | `./gradlew test jacocoTestReport --no-daemon` |
+| Integration tests (when required) | `./gradlew integrationTest --no-daemon` |
+| Full build gate (must be GREEN before commit) | `./gradlew clean build --no-daemon` |
+| Run locally | `./gradlew bootRun` |
+
+### Frontend
+
+| Purpose | Command |
+|---|---|
+| Type check | `npx tsc --noEmit` |
+| Lint | `npx eslint src/ --ext .ts,.tsx` |
+| Unit tests + coverage | `npm test -- --coverage` |
+| Full build gate | `npm run build` |
+| Run locally | `npm run dev` |
 
 ## Quality Thresholds
 

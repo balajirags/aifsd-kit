@@ -129,16 +129,20 @@ Auto Re-slice **also** splits FE mega-stories: if one UI file covers 3+ distinct
 
 - BRD: `docs/brd/...`
 - Spec: `docs/specs/...`
-- Epic: Jira key and/or `docs/epics/...` or github issues
-- Stories folder: `docs/stories/<epic-slug>/` (scan always)
+- Epic: resolve per `docs/project-context.md` → Delivery Tracker (Jira key / GitHub issue / `docs/epics/...`) — an explicit Jira key, issue URL, or file path given in this specific request always overrides that default for this run
+- Stories folder: `docs/stories/<epic-slug>/` (scan always, regardless of tracker — it's the markdown mirror even when Jira/GitHub is primary)
 
 ## Output
 
+Write stories to the location declared in `docs/project-context.md` → Delivery Tracker:
+
 | Tracker | Location |
 |---|---|
-| Jira on | Stories under Epic (+ markdown mirror) |
-| Jira off | `docs/stories/<epic-slug>/` |
-| Github on | Stories under Epic (+ markdown mirror) |
+| `Jira` | Stories under the Epic in Jira + a markdown mirror in `docs/stories/<epic-slug>/` |
+| `GitHub Issues` | Stories as issues under the Epic issue + a markdown mirror in `docs/stories/<epic-slug>/` |
+| `Local docs` | `docs/stories/<epic-slug>/` only — no external tracker |
+
+If `docs/project-context.md` doesn't declare a tracker yet, default to `Local docs` and flag the gap rather than guessing.
 
 Filenames name the **outcome** — never `crud`.
 
@@ -180,34 +184,7 @@ Endpoints go only under **Spec coverage**.
 
 ## Story file template
 
-```markdown
-# <Outcome title — not CRUD>
-
-| Field | Value |
-|---|---|
-| Epic | ... |
-| Label | Backend \| UI \| Full-stack |
-| Spec | docs/specs/... |
-| Order | N |
-| Depends on | ... |
-| Status | Draft |
-
-## Description
-As a <actor>, I want <one outcome>, so that <benefit>.
-
-## Spec coverage
-- <one endpoint, or GET list + GET by id>
-
-## Acceptance Criteria
-| Scenario | Given | When | Then |
-|---|---|---|---|
-| ... | ... | ... | ... |
-
-## Assumptions
--
-## Open Questions
--
-```
+Use `docs/templates/story.template.md` for every story file — don't hand-roll the shape. The one thing to enforce beyond the template itself: the title is the **outcome**, never `CRUD` or a bundled verb list (see Auto Re-slice above).
 
 ---
 

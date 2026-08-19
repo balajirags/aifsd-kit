@@ -1,6 +1,6 @@
 # PRD Template
 
-> Owner: `prd` agent · Path: `docs/prd/<initiative-slug>.md`
+> Owner: whoever writes product requirements (no dedicated `prd` agent ships in this kit) · Path: `docs/prd/<initiative-slug>.md`
 
 ## Meta
 
