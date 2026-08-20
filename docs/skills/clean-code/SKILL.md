@@ -1,52 +1,96 @@
 ---
 name: clean-code
-description: "Naming, function size, null-handling, and comment discipline for readable, intention-revealing code"
+description: "This skill embodies the principles of \"Clean Code\" by Robert C. Martin (Uncle Bob). Use it to transform \"code that works\" into \"code that is clean.\""
 ---
 
-# Clean Code
+# Clean Code Skill
 
-> Adapted from `.agents/skills/clean-code/SKILL.md` (Robert C. Martin's *Clean Code*). Style/readability guidance for whoever is writing code — out of scope for `docs/team/reviewer.agent.md`, which reports only P1/P2 (security/critical, architecture/Spec drift), never style or naming.
+This skill embodies the principles of "Clean Code" by Robert C. Martin (Uncle Bob). Use it to transform "code that works" into "code that is clean."
 
-## Rules
+## 🧠 Core Philosophy
+> "Code is clean if it can be read, and enhanced by a developer other than its original author." — Grady Booch
 
-1. Names must reveal intent — `elapsedTimeInDays`, not `d`. A class name is a noun (`Customer`), a method name is a verb (`postPayment`) — never the reverse.
-2. A function should do one thing, at one level of abstraction — don't mix high-level orchestration with low-level detail (e.g. a regex or a raw SQL fragment) in the same function as business logic.
-3. Prefer zero function arguments, tolerate one or two, treat three or more as a smell needing a real justification (or a parameter object).
-4. Don't comment bad code — rewrite it so the code states its own intent. A comment is for something the code genuinely can't express (a legal note, a non-obvious external-library quirk, intentional context that would otherwise be lost).
-5. Never return `null` from a method whose caller has to guess whether to check for it — return `Optional`, an empty collection, or a documented sentinel instead. Never pass `null` as an argument either.
-6. Keep classes small and single-responsibility — if you can't describe a class's job in one sentence without "and," split it.
-7. Hide implementation behind interfaces (data abstraction); respect the Law of Demeter — avoid reaching through `a.getB().getC().doSomething()` chains.
-8. Use exceptions for error handling, not return codes — and write the surrounding try/catch/finally structure before filling in the logic it wraps.
-9. Declare variables close to where they're used — don't declare everything at the top of a function regardless of when it's needed.
+## When to Use
+Use this skill when:
+- **Writing new code**: To ensure high quality from the start.
+- **Reviewing Pull Requests**: To provide constructive, principle-based feedback.
+- **Refactoring legacy code**: To identify and remove code smells.
+- **Improving team standards**: To align on industry-standard best practices.
 
-## Anti-patterns
+## 1. Meaningful Names
+- **Use Intention-Revealing Names**: `elapsedTimeInDays` instead of `d`.
+- **Avoid Disinformation**: Don't use `accountList` if it's actually a `Map`.
+- **Make Meaningful Distinctions**: Avoid `ProductData` vs `ProductInfo`.
+- **Use Pronounceable/Searchable Names**: Avoid `genymdhms`.
+- **Class Names**: Use nouns (`Customer`, `WikiPage`). Avoid `Manager`, `Data`.
+- **Method Names**: Use verbs (`postPayment`, `deletePage`).
 
-- Single/double-letter or abbreviated variable names (`d`, `usrCnt`, `genymdhms`) outside of a genuinely tiny, obvious loop index.
-- A function over ~20-30 lines doing several distinct things — a strong signal it should be several functions.
-- A comment restating what the next line already says (`// increment i` above `i++`).
-- `getFoo()` returning `null` on "not found" instead of `Optional.empty()` — pushes a null-check obligation onto every caller, and the one caller who forgets it gets an NPE in production.
-- Magic numbers/strings with no named constant explaining what they mean.
-- A class named `...Manager`/`...Helper`/`...Util` that has quietly become a dumping ground for unrelated logic.
+## 2. Functions
+- **Small!**: Functions should be shorter than you think.
+- **Do One Thing**: A function should do only one thing, and do it well.
+- **One Level of Abstraction**: Don't mix high-level business logic with low-level details (like regex).
+- **Descriptive Names**: `isPasswordValid` is better than `check`.
+- **Arguments**: 0 is ideal, 1-2 is okay, 3+ requires a very strong justification.
+- **No Side Effects**: Functions shouldn't secretly change global state.
 
-## Examples
+## 3. Comments
+- **Don't Comment Bad Code—Rewrite It**: Most comments are a sign of failure to express ourselves in code.
+- **Explain Yourself in Code**: 
+  ```python
+  # Check if employee is eligible for full benefits
+  if employee.flags & HOURLY and employee.age > 65:
+  ```
+  vs
+  ```python
+  if employee.isEligibleForFullBenefits():
+  ```
+- **Good Comments**: Legal, Informative (regex intent), Clarification (external libraries), TODOs.
+- **Bad Comments**: Mumbling, Redundant, Misleading, Mandated, Noise, Position Markers.
 
-**Do this:**
-```java
-if (employee.isEligibleForFullBenefits()) { ... }
-```
+## 4. Formatting
+- **The Newspaper Metaphor**: High-level concepts at the top, details at the bottom.
+- **Vertical Density**: Related lines should be close to each other.
+- **Distance**: Variables should be declared near their usage.
+- **Indentation**: Essential for structural readability.
 
-**Not this:**
-```java
-// Check if employee is eligible for full benefits
-if (employee.flags & HOURLY == 0 && employee.age > 65) { ... }
-```
+## 5. Objects and Data Structures
+- **Data Abstraction**: Hide the implementation behind interfaces.
+- **The Law of Demeter**: A module should not know about the innards of the objects it manipulates. Avoid `a.getB().getC().doSomething()`.
+- **Data Transfer Objects (DTO)**: Classes with public variables and no functions.
 
-**Do this:**
-```java
-Optional<Customer> findByEmail(String email);
-```
+## 6. Error Handling
+- **Use Exceptions instead of Return Codes**: Keeps logic clean.
+- **Write Try-Catch-Finally First**: Defines the scope of the operation.
+- **Don't Return Null**: It forces the caller to check for null every time.
+- **Don't Pass Null**: Leads to `NullPointerException`.
 
-**Not this:**
-```java
-Customer findByEmail(String email); // returns null if not found — every caller must remember to check
-```
+## 7. Unit Tests
+- **The Three Laws of TDD**:
+  1. Don't write production code until you have a failing unit test.
+  2. Don't write more of a unit test than is sufficient to fail.
+  3. Don't write more production code than is sufficient to pass the failing test.
+- **F.I.R.S.T. Principles**: Fast, Independent, Repeatable, Self-Validating, Timely.
+
+## 8. Classes
+- **Small!**: Classes should have a single responsibility (SRP).
+- **The Stepdown Rule**: We want the code to read like a top-down narrative.
+
+## 9. Smells and Heuristics
+- **Rigidity**: Hard to change.
+- **Fragility**: Breaks in many places.
+- **Immobility**: Hard to reuse.
+- **Viscosity**: Hard to do the right thing.
+- **Needless Complexity/Repetition**.
+
+## 🛠️ Implementation Checklist
+- [ ] Is this function smaller than 20 lines?
+- [ ] Does this function do exactly one thing?
+- [ ] Are all names searchable and intention-revealing?
+- [ ] Have I avoided comments by making the code clearer?
+- [ ] Am I passing too many arguments?
+- [ ] Is there a failing test for this change?
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
