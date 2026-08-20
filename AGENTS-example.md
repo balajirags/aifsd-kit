@@ -46,9 +46,9 @@ Not part of the Orchestrator's lifecycle graph — sustained, human-in-the-loop 
 
 Execution doesn't start on a subset. `architect.agent.md` runs a **Finalization check** — PRD approved, every BRD Ready for Spec, the HLD approved, every Spec approved — before handing the whole initiative to the Orchestrator's own graph at `docs/team/ba.agent.md`. One BRD's Spec being Approved doesn't by itself start execution.
 
-## Skills (`docs/skills/`, project-authored)
+## Skills (project-authored)
 
-This kit ships the loading mechanism, not the content: `docs/skills/` is where this project's own engineering-standard skills live (clean code, backend best practices, logging, security, db conventions, etc. — whichever this project needs). It's empty in the kit itself; add skills per `docs/templates/skill.template.md` as your project needs them. `developer.agent.md` reads `docs/project-context.md` plus whichever skills apply to the current task — every skill marked `Always load: Yes`, plus any others it judges relevant to what Recon found (no declared trigger to match, skills are agent-agnostic) — see its Phase 1–2. If your harness also has a native skill/instruction mechanism (e.g. `.claude/skills/`, `.github/instructions/`), point it at these same files instead of duplicating content.
+This project has its own engineering-standard skills (clean code, backend best practices, logging, security, db conventions, etc. — whichever this project needs), each a real [Agent Skills](https://agentskills.io/specification) `SKILL.md` per `docs/templates/skill.template.md`. Skills are agent-agnostic with no declared trigger — relevance is always judged by whichever agent is working, never forced or hardcoded to a phase. If your harness has a native skill mechanism (Claude Code, OpenCode, Pi, Codex all do), it discovers and surfaces relevant skills on its own from wherever that harness keeps them — none of the role files above need to know or say where. GitHub Copilot has no such mechanism; see that harness's own setup notes for how skills are handled there instead.
 
 Before any commit after code changes: run this project's build/lint/test commands as documented in `docs/project-context.md`.
 
@@ -67,7 +67,7 @@ Before any commit after code changes: run this project's build/lint/test command
 | `docs/templates/` | PRD / BRD / Spec / Story / project-context / skill templates |
 | `docs/team/` | Per-role agent behavior specs (ba, developer, reviewer, qa) |
 | `docs/discovery/` | Optional human-driven PRD → BRD → Spec co-authoring agents (to-prd, to-brd, architect) — see Upstream authoring above |
-| `docs/skills/` | This project's engineering-standard skills (empty in the kit; add your own) |
+| *(harness-native skill folder, or `docs/skills/` if none)* | This project's engineering-standard skills — starter reference set shipped, add/replace as needed |
 | `docs/dev-checkpoints/` | Developer task checkpoints |
 | `docs/example/` | A fully filled-in worked example of this kit (fictional project) — copy the kit files above, not this folder |
 

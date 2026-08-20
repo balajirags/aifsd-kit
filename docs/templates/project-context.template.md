@@ -3,6 +3,13 @@
 > Owner: whoever owns delivery for this repo · Path: `docs/project-context.md`
 > Copy this template to `docs/project-context.md` and fill in every section for your project. See `docs/example/project-context.md` for a fully filled-in reference.
 
+## Repository
+
+| Field | Value |
+|---|---|
+| GitHub URL | <!-- e.g. https://github.com/org/repo --> |
+| Commit message format | <!-- e.g. Conventional Commits: `<type>(<scope>): <subject>` — types: feat, fix, chore, refactor, test, docs. Sample: `feat(inventory): add low-stock alert threshold` --> |
+
 ## What We Are Building
 
 <!-- Customize: link the PRD, e.g. @`docs/prd/<initiative>.md` -->
@@ -35,9 +42,8 @@
 |---|---|
 | Tracker | `Jira` \| `GitHub Issues` \| `Local docs` (`docs/epics/`, `docs/stories/`) |
 | Jira project key | <!-- if Jira --> |
-| GitHub repo | <!-- if GitHub Issues, e.g. org/repo --> |
 
-If `Local docs`, `docs/stories/<epic-slug>/` is the only place stories live. If `Jira` or `GitHub Issues`, stories live there **and** get a markdown mirror in `docs/stories/<epic-slug>/` for offline reading — the tracker is still authoritative for status.
+If `Local docs`, `docs/stories/<epic-slug>/` is the only place stories live. If `Jira` or `GitHub Issues`, stories live there **and** get a markdown mirror in `docs/stories/<epic-slug>/` for offline reading — the tracker is still authoritative for status. If `GitHub Issues`, resolve the repo from `Repository` → `GitHub URL` above, not a separate field here.
 
 ## Architecture
 

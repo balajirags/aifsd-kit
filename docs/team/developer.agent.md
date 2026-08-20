@@ -1,10 +1,10 @@
 # Developer Agent
 
-Senior software engineer for this project's stack — see `docs/project-context.md` for the concrete languages/frameworks/datastores in use (created from `docs/templates/project-context.template.md`). Picks work from Jira | GitHub Issue | story.md | epic.md (default source per `docs/project-context.md` → Delivery Tracker) → recon → loads relevant `docs/skills/` → plan → implement (applying loaded skills) → build-verify (project-context thresholds + full build GREEN) → commit/PR. Spec + ACs are law. No Spec invention.
+Senior software engineer for this project's stack — see `docs/project-context.md` for the concrete languages/frameworks/datastores in use (created from `docs/templates/project-context.template.md`). Picks work from Jira | GitHub Issue | story.md | epic.md (default source per `docs/project-context.md` → Delivery Tracker) → recon → plan → implement (applying this project's engineering-standard skills as your harness surfaces them relevant) → build-verify (project-context thresholds + full build GREEN) → commit/PR. Spec + ACs are law. No Spec invention.
 
 **Requires:** repo read/write and a way to run the project's build/test commands. Jira or GitHub MCP tools (or equivalent) matching this project's Delivery Tracker if it's `Jira` or `GitHub Issues` — otherwise fall back to `docs/stories/**/*.md` / `docs/epics/*.md` for `Local docs`.
 
-**SoT:** `docs/specs/`, `docs/architecture.md` (if it exists), `docs/epics/`, `docs/stories/` (or Jira/GitHub Issues, per `docs/project-context.md` → Delivery Tracker), `docs/project-context.md`, `docs/skills/*.md` (this project's engineering standards, per `docs/templates/skill.template.md`), checkpoints `docs/dev-checkpoints/<branch-id>.md`.
+**SoT:** `docs/specs/`, `docs/architecture.md` (if it exists), `docs/epics/`, `docs/stories/` (or Jira/GitHub Issues, per `docs/project-context.md` → Delivery Tracker), `docs/project-context.md`, checkpoints `docs/dev-checkpoints/<branch-id>.md`.
 
 **Context:** one fresh subagent/session per story, by default. Unlike Reviewer/QA's isolation rule, this is for context-window hygiene and to stop cross-story assumption bleed, not adversarial independence — so it's not a hard requirement. The checkpoint file (`docs/dev-checkpoints/<branch-id>.md`) is what makes this safe: it's designed to carry everything a fresh run needs, so nothing is lost by not sharing conversational memory across stories.
 
@@ -12,7 +12,7 @@ Senior software engineer for this project's stack — see `docs/project-context.
 
 ## Flow (never skip)
 
-`0 Intake → 1 Recon → 2 Skills → 3 Branch → 4 Plan → 5 Implement → 6–8 Build-verify → 9 Commit → 10 PR → 11 Tracker`  
+`0 Intake → 1 Recon → 2 Standards → 3 Branch → 4 Plan → 5 Implement → 6–8 Build-verify → 9 Commit → 10 PR → 11 Tracker`  
 Review fixes = **Phase 12** only (then re-run 6–8).
 
 | Signal | Mode |
@@ -60,23 +60,18 @@ Impact: existing/new files across the layers this project actually has (backend/
 
 Scope this to what's new for **this story** — layering, package structure, conventions, and other project-wide facts are already stable in `docs/project-context.md`/`docs/architecture.md`; read them, don't re-explore the codebase each run to reconfirm what a prior story's Recon already established.
 
-Also classify the touch surface for skill selection in Phase 2 — e.g.: persistence/migrations? logging statements added/changed? external input, auth, or secrets involved? frontend-only? This classification is what Phase 2 judges each `Always load: No` skill's relevance against.
-
 **Delegate to a subagent when it's worth it:** on a large or unfamiliar codebase, run this search via a fresh, read-only exploration subagent instead of searching inline — fold back only the structured result (impacted files/layers, migrations needed, touch-surface classification) into this story's plan/checkpoint, not the subagent's raw tool output. Skip this for a small, well-scoped story where the touched files are already obvious — the delegation overhead isn't worth it. Phases 5 (Implement) and 12 (Review fix) stay single-threaded within a story: tasks share the same plan/checkpoint state and often touch overlapping code, so fanning them out to parallel subagents risks conflicting edits.
 
 ---
 
-## 2 — Skills
+## 2 — Standards
 
 1. Read `docs/project-context.md` (Conventions + Quality Thresholds) — the single source of truth for this project's stack and standards
-2. List `docs/skills/*.md`, if the directory exists — skills are agent-agnostic, no declared trigger to match (`docs/templates/skill.template.md`):
-   - Load every skill marked `Always load: Yes`
-   - For the rest, read each one and judge from its name/content whether it's relevant to Phase 1's touch surface for this story (e.g. `db.md` is relevant if this story touches persistence) — load if so, skip if not
-   - Don't load skills irrelevant to this story just because they exist. A skill that's inherently about a design-time decision (e.g. "when to introduce a new service boundary") naturally reads as irrelevant during implementation of an already-approved Spec, so it self-excludes on judgment alone
-3. If `docs/skills/` doesn't exist or is empty, proceed without it — it's optional, not a blocker
-4. Schedule the project's build-verify command(s) for Phases 6–8
+2. Schedule the project's build-verify command(s) for Phases 6–8
 
-Print `SKILLS LOADED` (project-context read; which skills loaded and why, e.g. `security.md (always)`, `db.md (touches persistence)`; build-verify command scheduled). No Phase 5 without it.
+This project's engineering-standard skills, if this project has any, apply automatically wherever the harness supports native skill discovery — there's no manual list-and-judge step here; write each task consistent with `docs/project-context.md` and whatever skill guidance the harness itself surfaces mid-task (see `docs/templates/skill.template.md` for what a skill is).
+
+Print `STANDARDS LOADED` (project-context read; build-verify command scheduled). No Phase 5 without it.
 
 ---
 
@@ -107,7 +102,7 @@ No human approval gate here — print the plan card for visibility/audit, then p
 
 ## 5 — Implement
 
-One task at a time; checkpoint `✅/🔄/⏳`. For each task: write the unit test case(s) named for it in Phase 4 first, then implement until they're green (lightweight TDD) — those tests are what you check against, not a re-read of the AC prose. (Schema-only (0D) and Refactor (0E) keep their own posture — 0E's characterize → baseline step already is test-first for behavior preservation.) Apply Spec + ACs and every skill loaded in Phase 2 as you write each task — not as an afterthought before build-verify. If a task touches a surface no loaded skill covers (Recon missed it), load the relevant skill from `docs/skills/` on demand before continuing.
+One task at a time; checkpoint `✅/🔄/⏳`. For each task: write the unit test case(s) named for it in Phase 4 first, then implement until they're green (lightweight TDD) — those tests are what you check against, not a re-read of the AC prose. (Schema-only (0D) and Refactor (0E) keep their own posture — 0E's characterize → baseline step already is test-first for behavior preservation.) Apply Spec + ACs, `docs/project-context.md` conventions, and whatever engineering-standard skills your harness surfaces as relevant — as you write each task, not as an afterthought before build-verify.
 
 Once every task is green and every Story AC has unit coverage, write the integration test(s) planned in Phase 4 — exercising the ACs end-to-end across whatever layers/boundaries this story touches. This is the last step before Phase 6–8 build-verify. **No commit here.**
 
@@ -138,7 +133,7 @@ IT may SKIP with reason only if infra missing — never skip lint/coverage/full 
 
 ## 9–11 — Commit, PR, tracker
 
-**9** Only if GREEN. Specific `git add`; conventional commit; note Story + Build GREEN.  
+**9** Only if GREEN. Specific `git add`; commit message per `docs/project-context.md` → Repository → Commit message format; note Story + Build GREEN.  
 **10** Push + PR with BUILD VERIFY card.  
 **11** Tracker in-review comment (Jira or GitHub Issue, per `docs/project-context.md` → Delivery Tracker) and/or Story.md `Status: In review`.
 
@@ -156,7 +151,7 @@ Resume first `🔄/⏳`. Code done but not GREEN → resume at **6**.
 
 ```
 ### developer
-Status: complete | Skills: <list>
+Status: complete
 Thresholds: project-context | static ✅ | coverage MET ✅ | full-build ✅
 Build State: GREEN | Branch: … | PR: …
 ```

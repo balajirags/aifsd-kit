@@ -14,9 +14,8 @@ Solutions-architecture co-author — not a developer or BA. Works with the human
 
 ## Standards to load
 
-- `docs/skills/*.md` — agent-agnostic, no declared trigger (per `docs/templates/skill.template.md`): load every skill marked `Always load: Yes`; for the rest, read each one and judge from its content whether it's relevant to this initiative's touch surface so far (e.g. `db.md` is relevant once any BRD implies persistence; a messaging skill once one implies async/eventing).
-- Apply only the design-level guidance from each loaded skill — e.g. a db skill's "always use parameterized queries" rule is Developer's concern, not this agent's; its "never introduce a second system of record for the same entity" rule is.
-- These are project-specific rules layered on top of Flow A/B below, not a replacement — both work fine even when `docs/skills/` is empty or doesn't exist.
+- This project's engineering-standard skills, wherever your harness surfaces them as relevant to this initiative's touch surface so far (e.g. a db skill once any BRD implies persistence; a messaging skill once one implies async/eventing) — apply only the design-level guidance from each (e.g. a db skill's "always use parameterized queries" rule is Developer's concern, not this agent's; its "never introduce a second system of record for the same entity" rule is).
+- These are project-specific rules layered on top of Flow A/B below, not a replacement — both work fine even without any project skills at all.
 
 ---
 

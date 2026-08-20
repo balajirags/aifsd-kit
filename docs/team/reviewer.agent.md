@@ -31,8 +31,7 @@ This kit doesn't hardcode a model name here since it varies per team/harness; wi
 ## Standards to load for criteria
 
 - `docs/project-context.md` — this project's stack, conventions, and Quality Thresholds
-- `docs/skills/*.md` — agent-agnostic, no declared trigger (per `docs/templates/skill.template.md`): load every skill marked `Always load: Yes`; for the rest, read each one and judge from its content whether it's relevant to the file categories from Phase 1 (e.g. `db.md` is relevant if Migrations files are in the diff). Apply only its P1/P2-relevant rules regardless — style/nits are out of this agent's scope by design, even from a fully-loaded skill file (e.g. `clean-code.md`'s style rules never surface here, but a P2-relevant rule in the same file would).
-- These skills are **project-specific rules layered on top of** the baseline P1/P2 categories in Phase 2, not a replacement — the baseline rubric below works even when `docs/skills/` is empty or doesn't exist.
+- This project's engineering-standard skills, wherever your harness surfaces them as relevant to the diff — apply only their P1/P2-relevant rules regardless — style/nits are out of this agent's scope by design, even from a skill that also covers style (e.g. `clean-code`'s style rules never surface here, but a P2-relevant rule in the same file would). These are **project-specific rules layered on top of** the baseline P1/P2 categories in Phase 2, not a replacement — the baseline rubric below works even without any project skills at all.
 - Spec: `docs/specs/<epic>.md` + Story ACs (Jira or `docs/stories/...`)
 
 ---
@@ -99,8 +98,8 @@ git diff origin/main...HEAD
 
 ## Phase 2 — ANALYZE (P1/P2 only)
 
-Review **each** relevant changed file through the tiers below, plus whichever `docs/skills/*.md` you loaded per Standards above.
-Every finding needs: **file:line** (or hunk), **severity**, **why**, **fix suggestion**, and its **origin** — baseline rubric or a specific skill file (e.g. `skills/db.md`) — so the source of a rule stays traceable.
+Review **each** relevant changed file through the tiers below, plus whichever project skills apply per Standards above.
+Every finding needs: **file:line** (or hunk), **severity**, **why**, **fix suggestion**, and its **origin** — baseline rubric or a specific skill file (e.g. `db-postgres`) — so the source of a rule stays traceable.
 
 Do **not** raise code-quality, style, or missing-test findings here — they are out of scope for this agent (see Scope note above), not merely deprioritized. This applies even if a loaded skill file contains style guidance: only its P1/P2-relevant rules apply here.
 
@@ -140,9 +139,9 @@ Do **not** raise code-quality, style, or missing-test findings here — they are
 - Non-backward-compatible migration without expand/contract notes
 - Migration not justified by Spec for this story
 
-### Project skills (`docs/skills/*.md`, loaded per Standards above)
+### Project skills (per Standards above)
 
-Apply the rules from each loaded skill file, but only where they describe a P1 (security/critical) or P2 (Spec/architecture/boundary drift) condition — a skill file may contain style guidance too; ignore that part here. Tag findings from a skill file with its filename (e.g. `[P2 skills/db.md]`) instead of folding them silently into the baseline categories above.
+Apply the rules from each loaded skill file, but only where they describe a P1 (security/critical) or P2 (Spec/architecture/boundary drift) condition — a skill file may contain style guidance too; ignore that part here. Tag findings from a skill file with its skill name (e.g. `[P2 db-postgres]`) instead of folding them silently into the baseline categories above.
 
 ### Fullstack checklist (run every PR; skip items this project's stack doesn't have)
 

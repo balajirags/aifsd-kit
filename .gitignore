@@ -11,6 +11,8 @@ Thumbs.db
 
 # Claude Code local/personal settings
 .claude/settings.local.json
+.agents
+.claude
 
 # Node tooling used transiently to build/review the reveal.js decks under slides/
 # (puppeteer for overflow checks, decktape for screenshots) — not a deliverable
@@ -24,3 +26,7 @@ slides/**/*.pdf
 
 # Generic logs
 *.log
+
+# Generated per-harness kits (scripts/build-kit.sh output) — not committed
+*-kit/
+skills-lock.json

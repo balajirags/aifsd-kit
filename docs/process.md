@@ -66,17 +66,16 @@ Steps, in order:
 
 1. Resolve **one** work item: Jira key, `docs/stories/**/*.md`, or `docs/epics/*.md` (next ready story)
 2. Run each story in a **fresh context/session by default** (new subagent/session per story) — unlike Reviewer/QA's isolation (below), this is for context-window hygiene and to stop cross-story assumption bleed, not adversarial independence. Not a hard rule: continuing straight from BA's `Stories approved` into the first story's kickoff in the same session is a fine efficiency call if the harness makes that convenient
-3. **Read** whichever `docs/skills/*.md` apply to this task (always-on skills, plus any matching what Recon found — see `docs/team/developer.agent.md` Phase 1–2); empty/missing directory is not a blocker
-4. Print PLAN card (tasks derived from Story ACs, files touched, Spec gaps) for visibility, then proceed straight to implementation — no human approval gate after planning
-5. Implement against Spec + ACs only; flag Spec gaps
-6. On any code touch, run build-verify:
+3. Print PLAN card (tasks derived from Story ACs, files touched, Spec gaps) for visibility, then proceed straight to implementation — no human approval gate after planning
+4. Implement against Spec + ACs only, applying this project's engineering-standard skills as your harness surfaces them relevant; flag Spec gaps
+5. On any code touch, run build-verify:
    - Thresholds from `project-context` → Quality Thresholds only
    - Static analysis clean on touched files
    - Unit tests green
    - Coverage **MET**
    - **Full build GREEN**
-7. No commit / PR / “complete” unless Build State is GREEN
-8. Commit meaningfully after green slices; never force-push shared main
+6. No commit / PR / “complete” unless Build State is GREEN
+7. Commit meaningfully after green slices; never force-push shared main
 
 ## Story quality
 

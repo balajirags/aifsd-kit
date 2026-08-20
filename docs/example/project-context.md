@@ -1,5 +1,12 @@
 # Project Context
 
+## Repository
+
+| Field | Value |
+|---|---|
+| GitHub URL | https://github.com/company/performance-marketing-platform |
+| Commit message format | Conventional Commits: `<type>(<scope>): <subject>` — types: feat, fix, chore, refactor, test, docs, e.g. `feat(inventory): add low-stock alert threshold` |
+
 ## What We Are Building
 
 Understand the product and its context from prd file @`docs/example/prd/performance-marketing-mvp.md`.
@@ -31,7 +38,6 @@ A fullstack application with a React SPA frontend and a Spring Boot API backend.
 |---|---|
 | Tracker | Local docs (`docs/epics/`, `docs/stories/`) |
 | Jira project key | n/a |
-| GitHub repo | n/a |
 
 This pilot has no Jira/GitHub tracker set up yet — Epics and Stories live entirely under `docs/epics/` and `docs/stories/<epic-slug>/`. Switch to `Jira` or `GitHub Issues` here once one is adopted; `ba.agent` will start writing there plus a markdown mirror.
 

@@ -70,9 +70,11 @@ The Orchestrator's input (`docs/process.md`) is a **queue that can mix all of th
    - `docs/discovery/` — only if you want the optional PRD → BRD → Spec co-authoring agents (`to-prd`, `to-brd`, `architect`)
    - Do **not** copy `docs/example/` — it's a worked reference to read, not kit content (see its own README)
 
-2. **Fill in `docs/project-context.md`** — the single most important step. Copy it from `docs/templates/project-context.template.md` and fill in every section: your stack, source layout, conventions, build/lint/test commands, Quality Thresholds (coverage minima, and an optional mutation-score minimum), and — critically — your **Delivery Tracker** (`Jira` / `GitHub Issues` / `Local docs`), since every role file reads this to know where stories live and how status gets posted back. Use `docs/example/project-context.md` as a reference for the level of detail expected, not a value to copy.
+   **Shortcut:** `scripts/build-kit.sh <harness>` (or run with no arguments for an interactive menu) generates a ready-to-copy `<harness>-kit/` directory at the repo root with these files pre-arranged for your harness — including native skill mirrors for Claude Code/OpenCode/Pi/Codex, a starter `docs/project-context.md`/`docs/architecture.md`, and the empty `docs/{prd,brd,specs,epics,stories,dev-checkpoints}/` folders — so copy that one directory into your project instead of assembling files by hand. Supported harness names: `claude`, `opencode`, `pi`, `copilot`, `codex`, or `all`.
 
-3. **(Optional) Add project skills** under `docs/skills/` per `docs/templates/skill.template.md` — engineering-standard rules (security, db conventions, logging, whatever your project needs). Empty is fine to start. Skills carry no role tag — any agent loads a skill marked `Always load: Yes`, and for the rest, judges relevance to its own current task from the skill's content itself.
+2. **Fill in `docs/project-context.md`** — the single most important step. Copy it from `docs/templates/project-context.template.md` and fill in every section: your repository's GitHub URL and commit message format, your stack, source layout, conventions, build/lint/test commands, Quality Thresholds (coverage minima, and an optional mutation-score minimum), and — critically — your **Delivery Tracker** (`Jira` / `GitHub Issues` / `Local docs`), since every role file reads this to know where stories live and how status gets posted back. Use `docs/example/project-context.md` as a reference for the level of detail expected, not a value to copy.
+
+3. **(Optional) Add project skills** per `docs/templates/skill.template.md` — engineering-standard rules (security, db conventions, logging, whatever your project needs). If you used the `scripts/build-kit.sh` shortcut, add new skills directly at your harness's native skill location (e.g. `.claude/skills/<slug>/SKILL.md`, `.opencode/skills/<slug>/SKILL.md`) — that harness discovers and judges relevance for them on its own; none of `docs/team/*.agent.md` names a skill path or needs to. If you copied files by hand instead (no native skill mechanism, e.g. GitHub Copilot), `docs/skills/` is the only location, and nothing surfaces them automatically — see Gotchas below. Skills carry no role tag and no forced-load flag either way — any agent that does load one judges relevance to its own current task from the skill's content itself.
 
 4. **Wire it into your coding agent.** The kit is deliberately harness-agnostic — the one thing guaranteed to work everywhere is pointing your agent at a file directly ("follow `AGENTS.md`", or "follow `docs/team/developer.agent.md`"). Per-harness conveniences on top of that are optional and not part of the portable kit:
    - **Claude Code** — `CLAUDE.md` (`@AGENTS.md`) auto-loads every session; nothing else required. For a quick way to invoke one role ad hoc, you can add a `.claude/commands/<name>.md` slash command whose body is `@docs/team/<name>.agent.md` (or `@docs/discovery/<name>.agent.md`).
@@ -89,6 +91,7 @@ The Orchestrator's input (`docs/process.md`) is a **queue that can mix all of th
 
 | Path | Purpose |
 |---|---|
+| [`scripts/build-kit.sh`](scripts/README.md) | Generates a ready-to-copy, harness-specific kit directory (gitignored, regenerate on demand) |
 | `AGENTS.md` (from `AGENTS-example.md`) | Portable entry point — read first by any agent |
 | `docs/process.md` | Roles, gates, the Orchestrator's lifecycle graph, Definition of Done |
 | `docs/project-context.md` | Your stack, conventions, Quality Thresholds, Delivery Tracker — **you fill this in** |
@@ -97,7 +100,7 @@ The Orchestrator's input (`docs/process.md`) is a **queue that can mix all of th
 | `docs/templates/` | PRD / BRD / Spec / Story / project-context / skill templates |
 | `docs/prd/`, `docs/brd/`, `docs/specs/`, `docs/stories/`, `docs/epics/` | Where the actual artifacts live once written |
 | `docs/architecture.md` | Optional system-wide HLD, produced/maintained by `architect.agent.md` |
-| `docs/skills/` | Your project's engineering-standard rules (empty until you add some) |
+| `docs/skills/` | Your project's engineering-standard rules — only the skill location if hand-copied without a native skill mechanism; `scripts/build-kit.sh` relocates this to your harness's native folder instead |
 | `docs/dev-checkpoints/` | Developer's resumable per-story task checkpoints |
 | `docs/example/` | A fully filled-in worked instance — reference only, never copy into your repo |
 
@@ -110,3 +113,4 @@ If a human corrects an agent's behavior or a standard, the fix belongs in the do
 - The Reviewer↔Developer loop caps at 2 `REQUEST_CHANGES` cycles before escalating to a human; the QA↔Developer loop has no such cap today. Known and intentional — see `docs/process.md`.
 - Reviewer and QA's fresh-context requirement is a **hard rule**, not a default — it's what makes the gate meaningful. Developer's and BA's fresh-context-per-item is a *default* for context-window hygiene, which a harness can skip for convenience without breaking anything.
 - Templates must stay stack-agnostic; project-specific facts belong in `docs/project-context.md`, never hardcoded into a role file.
+- GitHub Copilot has no native skill-discovery mechanism — Claude Code, OpenCode, Pi, and Codex all auto-discover skills from their own native folder, so `docs/team/*.agent.md`/`docs/process.md` deliberately never name a skill path. For Copilot, that means project skills need an explicit nudge; `scripts/build-kit.sh` puts one in the generated `copilot-instructions.md`, but if you're wiring Copilot by hand, you'll need to tell it to read `docs/skills/*/SKILL.md` yourself. Known and intentional, not a bug to route around by re-adding path mechanics to the shared role files.

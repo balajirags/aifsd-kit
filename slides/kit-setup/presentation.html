@@ -183,6 +183,7 @@
               <li><code>docs/discovery/</code> — optional: to-prd, to-brd, architect</li>
             </ul>
             <blockquote>Do <strong>not</strong> copy <code>docs/example/</code> — it's a worked reference to read, not kit content.</blockquote>
+            <blockquote><i class="fa-solid fa-bolt"></i> <strong>Shortcut:</strong> <code>scripts/build-kit.sh &lt;harness&gt;</code> generates a ready-to-copy <code>&lt;harness&gt;-kit/</code> directory pre-arranged for Claude Code, OpenCode, Pi, Codex, or GitHub Copilot — relocating skills to that harness's native folder for the first four — so you can copy one directory instead of assembling files by hand.</blockquote>
           </div>
         </section>
         <section id="slide-11-2">
@@ -199,7 +200,11 @@
                 <h3>Quality Thresholds</h3>
                 <p>Coverage minima, and an optional mutation-score minimum</p>
               </div>
-              <div class="stage-card accent-warn" style="grid-column: span 2;">
+              <div class="stage-card">
+                <h3>Repository</h3>
+                <p>GitHub URL, and this project's commit message format — <code>developer.agent</code> reads this instead of a hardcoded convention</p>
+              </div>
+              <div class="stage-card accent-warn">
                 <h3>Delivery Tracker</h3>
                 <p><code>Jira</code> / <code>GitHub Issues</code> / <code>Local docs</code> — every role file reads this to know where stories live</p>
               </div>
@@ -210,11 +215,13 @@
           <h2>Step 3 — Add Project Skills <span class="text-muted">(optional)</span></h2>
           <div class="content">
             <div class="step-badge">3</div>
-            <p class="text-lg">Engineering-standard rules under <code>docs/skills/</code> per <code>skill.template.md</code> — security, db conventions, logging, whatever your project needs.</p>
+            <p class="text-lg">Engineering-standard rules per <code>skill.template.md</code> — security, db conventions, logging, whatever your project needs.</p>
             <ul class="text-lg">
-              <li>Empty is fine to start</li>
+              <li>Add directly at your harness's skill location (e.g. <code>.opencode/skills/&lt;slug&gt;/SKILL.md</code>) if built via <code>build-kit.sh</code> — <code>docs/skills/</code> only if hand-copied without a native mechanism</li>
+              <li>Your harness discovers it there on its own — <code>developer.agent.md</code>/<code>reviewer.agent.md</code> never name a skill path, so there's nothing to keep in sync</li>
+              <li>A real Agent Skills <code>SKILL.md</code> (frontmatter: <code>name</code>, <code>description</code>) — no kit-invented Owner/Meta fields</li>
               <li>No role tag — skills are agent-agnostic</li>
-              <li>Any agent loads a skill marked <code>Always load: Yes</code>, and judges the rest itself</li>
+              <li>No forced-load flag — any agent judges every skill's relevance to the task at hand</li>
             </ul>
           </div>
         </section>
@@ -225,9 +232,11 @@
             <table>
               <thead><tr><th>Harness</th><th>How</th></tr></thead>
               <tbody>
-                <tr><td>Claude Code</td><td><code>CLAUDE.md</code> (<code>@AGENTS.md</code>) auto-loads every session</td></tr>
+                <tr><td>Claude Code</td><td><code>CLAUDE.md</code> (<code>@AGENTS.md</code>) auto-loads every session; skills relocate to <code>.claude/skills/</code></td></tr>
+                <tr><td>OpenCode</td><td>Reference <code>AGENTS.md</code>; skills relocate to <code>.opencode/skills/</code></td></tr>
+                <tr><td>Pi / Codex</td><td>Reference <code>AGENTS.md</code>; skills relocate to <code>.agents/skills/</code> (both tools converged on this path)</td></tr>
                 <tr><td>GitHub Copilot</td><td>Point <code>.github/copilot-instructions.md</code> at <code>AGENTS.md</code></td></tr>
-                <tr><td>OpenCode / Codex / others</td><td>Reference <code>AGENTS.md</code> via your harness's instruction mechanism</td></tr>
+                <tr><td>Others</td><td>Reference <code>AGENTS.md</code> via your harness's instruction mechanism</td></tr>
               </tbody>
             </table>
             <blockquote><code>docs/discovery/</code> agents are sustained, human-in-the-loop sessions — keep them interactive. <code>docs/team/</code> agents (Reviewer, QA) need the opposite: a fresh, isolated subagent every time.</blockquote>
@@ -261,6 +270,7 @@
           <table>
             <thead><tr><th>Path</th><th>Purpose</th></tr></thead>
             <tbody>
+              <tr><td><code>scripts/build-kit.sh</code></td><td>Generates a ready-to-copy, harness-specific kit directory (gitignored)</td></tr>
               <tr><td><code>AGENTS.md</code></td><td>Portable entry point — read first by any agent</td></tr>
               <tr><td><code>docs/process.md</code></td><td>Roles, gates, Orchestrator graph, Definition of Done</td></tr>
               <tr><td><code>docs/project-context.md</code></td><td>Your stack, conventions, thresholds, tracker — <strong>you fill this in</strong></td></tr>
@@ -276,7 +286,7 @@
       <section id="divider-6" class="section-divider" data-state="is-section-divider">
         <p class="eyebrow text-uppercase">Read This First</p>
         <h1>Gotchas</h1>
-        <p>Three things worth knowing up front</p>
+        <p>A few things worth knowing up front</p>
       </section>
 
       <section id="slide-15">
@@ -293,6 +303,10 @@
           <div class="flow-step teal">
             <div class="num"><i class="fa-solid fa-layer-group"></i></div>
             <div><p><strong>Templates stay stack-agnostic.</strong> Project-specific facts belong in <code>docs/project-context.md</code>, never hardcoded into a role file.</p></div>
+          </div>
+          <div class="flow-step warn">
+            <div class="num"><i class="fa-solid fa-puzzle-piece"></i></div>
+            <div><p><strong>Copilot has no native skill discovery.</strong> Claude Code/OpenCode/Pi/Codex all auto-discover skills from their own folder, so role files never name a skill path. Copilot needs an explicit nudge — <code>build-kit.sh</code> puts one in <code>copilot-instructions.md</code>; wiring by hand means adding it yourself.</p></div>
           </div>
         </div>
       </section>
