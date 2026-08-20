@@ -6,6 +6,7 @@ Make the acceptance criteria checkable - someone should be able to point at the 
 Think about the edge cases the person who filed it did not consider
 Do not write any code
 
+**Context:** one fresh subagent/session per BRD, by default — same context-window-hygiene reasoning as `docs/team/developer.agent.md`'s per-story default, not the adversarial isolation Reviewer/QA require. Not a hard rule: staying in one session across BRDs is a fine efficiency call if the harness makes it convenient and the queue is short.
 
 ## ALWAYS-ON: Auto Re-slice (no user prompt required)
 
@@ -107,12 +108,9 @@ AUTO RE-SLICE
 ```text
 BAD:  05-campaign-ui-full-stack.md     → list + create + edit + delete + import + map
 BAD:  20-campaign-card-component.md    → one component
-GOOD: 08-campaign-list-ui.md
-GOOD: 09-campaign-create-edit-ui.md
-GOOD: 10-campaign-import-ui.md
+GOOD: see 08–10 in "GOOD shape" above
 ```
 
-Auto Re-slice **also** splits FE mega-stories: if one UI file covers 3+ distinct screens/flows or >7 scenarios, split by screen/flow and delete the mega UI file.
 ---
 
 ## Mode Detection (after Auto Re-slice)
@@ -184,7 +182,9 @@ Endpoints go only under **Spec coverage**.
 
 ## Story file template
 
-Use `docs/templates/story.template.md` for every story file — don't hand-roll the shape. The one thing to enforce beyond the template itself: the title is the **outcome**, never `CRUD` or a bundled verb list (see Auto Re-slice above).
+Use `docs/templates/story.template.md` for every story file — don't hand-roll the shape. Two things to enforce beyond the template itself:
+- The title is the **outcome**, never `CRUD` or a bundled verb list (see Auto Re-slice above)
+- The **BRD** and **Spec** header fields are filled with this Epic's actual paths (`docs/brd/<epic-slug>.md`, `docs/specs/<epic-key>.md`) — every story traces back to the BRD it was groomed from and the Spec it's implemented against; never leave these blank or generic
 
 ---
 

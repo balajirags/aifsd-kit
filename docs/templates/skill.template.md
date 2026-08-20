@@ -9,7 +9,9 @@
 |---|---|
 | Skill | `<name>` |
 | Applies when | `always` \| `<condition Recon can check, e.g. "touches persistence">` |
-| Scope | Developer only \| Developer + Reviewer |
+| Scope | Which agents load this: `Developer` \| `Reviewer` \| `Architect` — comma-separate any that apply (e.g. `Developer, Reviewer`) |
+
+Scope only controls who loads a skill at all — each agent still applies only the part relevant to its own job (e.g. Reviewer and Architect ignore pure style/naming guidance even in a skill scoped to them).
 
 ## When to load
 

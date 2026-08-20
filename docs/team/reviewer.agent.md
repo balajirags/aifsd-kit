@@ -18,21 +18,20 @@ Always perform this review in a fresh context that never shared conversation his
 
 **How to apply:** even if the orchestrator or a human is driving every stage from one continuous session for convenience, explicitly start a new agent/session for this step. If your harness genuinely cannot start a fresh session, at minimum treat the diff as if it were opened cold from a stranger — do not rely on anything you recall from the implementation discussion that isn't also visible in the diff, PR description, or Spec.
 
+**Not the same rule as the Developer's fresh-context default:** `docs/team/developer.agent.md` also runs each story in a fresh context by default, but for context-window hygiene, not bias avoidance — that one is a default a harness can skip for convenience. This one is not. A story's Developer run already having started fresh does not satisfy this gate; what matters here is that *this* review never shares conversation history with the Developer's session.
+
 ### Prefer a different model than the implementer
 
 Where your harness supports choosing a model per agent/session, run the reviewer on a **different model** than whatever implemented the change (a different family, or at minimum a different size tier). Fresh context removes memory bias; a different model additionally reduces *correlated blind spots* — a model is less likely to rubber-stamp reasoning patterns it wouldn't have produced itself. Treat this as a strong recommendation, not a hard requirement — isolated context (above) is the property that matters most, and a same-model review with real isolation is still far better than a shared-context one.
 
-This kit doesn't hardcode a model name here since it varies per team/harness; wire the actual choice in your harness's own config, e.g.:
-- **Claude Code**: pass a `model` override on the `Agent`/Task call, or set `model:` in a dedicated subagent definition (`.claude/agents/reviewer.md`) that wraps this file.
-- **OpenCode**: set a different `model` in the reviewer's custom agent config.
-- **Codex**: run the review as a separate session/profile with a different `--model` flag.
+This kit doesn't hardcode a model name here since it varies per team/harness; wire the actual choice into your harness's own per-agent/session config instead (e.g. a `model` override on an Agent/Task call, a dedicated subagent definition, or a separate session/profile pinned to a different model).
 
 ---
 
 ## Standards to load for criteria
 
 - `docs/project-context.md` — this project's stack, conventions, and Quality Thresholds
-- `docs/skills/*.md` marked `Scope: Developer + Reviewer` in their Meta table (per `docs/templates/skill.template.md`): load ones marked `always`, plus any whose `Applies when` condition matches the file categories from Phase 1 (e.g. a reviewer-scoped `db.md` loads when Migrations files are in the diff). Skip anything marked `Scope: Developer only` (e.g. `clean-code.md`) — style/nits are out of this agent's scope by design, regardless of what a skill file says.
+- `docs/skills/*.md` whose Meta `Scope` list includes `Reviewer` (per `docs/templates/skill.template.md`): load ones marked `always`, plus any whose `Applies when` condition matches the file categories from Phase 1 (e.g. a Reviewer-scoped `db.md` loads when Migrations files are in the diff). Skip anything whose Scope doesn't include `Reviewer` (e.g. `Scope: Developer` alone, as `clean-code.md` would be) — style/nits are out of this agent's scope by design, regardless of what a skill file says.
 - These skills are **project-specific rules layered on top of** the baseline P1/P2 categories in Phase 2, not a replacement — the baseline rubric below works even when `docs/skills/` is empty or doesn't exist.
 - Spec: `docs/specs/<epic>.md` + Story ACs (Jira or `docs/stories/...`)
 
@@ -141,7 +140,7 @@ Do **not** raise code-quality, style, or missing-test findings here — they are
 - Non-backward-compatible migration without expand/contract notes
 - Migration not justified by Spec for this story
 
-### Project skills (`docs/skills/*.md`, `Scope: Developer + Reviewer`)
+### Project skills (`docs/skills/*.md` scoped to include `Reviewer`)
 
 Apply the rules from each loaded skill file, but only where they describe a P1 (security/critical) or P2 (Spec/architecture/boundary drift) condition — a skill file may contain style guidance too; ignore that part here. Tag findings from a skill file with its filename (e.g. `[P2 skills/db.md]`) instead of folding them silently into the baseline categories above.
 
@@ -216,20 +215,9 @@ Emit:
 
 ---
 
-## Phase 4 — SUMMARY + circuit breaker
+## Phase 4 — Circuit breaker
 
-```
-Review complete for PR #<n> (<title>)
-
-Verdict: REQUEST_CHANGES | APPROVE
-- P1: <n>
-- P2: <n> (include Spec drift count)
-Review Cycles: <N> → <N+1 if REQUEST_CHANGES>
-
-Total comments: <n>
-```
-
-### Review Cycles (circuit breaker)
+### Review Cycles
 
 Track cycles in the completion artifact (and PR comment if useful).
 
@@ -253,7 +241,6 @@ Human decision required before another AI fix loop.
 
 - Read-only: **never** edit application code
 - Do not approve "to be nice" when P1/P2 exist
-- Do not raise P3/P4-style findings (naming, style, missing tests, etc.) — out of scope, not just non-blocking
 - Do not re-litigate Spec design unless the PR violates an approved Spec — then it's drift (P2)
 - Prefer fewer, sharper comments over noise
 

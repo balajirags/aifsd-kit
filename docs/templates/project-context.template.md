@@ -100,8 +100,11 @@ Agents must **Read** this section before implementing and enforce these numbers 
 | Line coverage (backend, touched production files) | |
 | Branch coverage (backend, touched production files) | |
 | Line/statement coverage (frontend, touched files) | |
+| Mutation score (touched files, optional — see below) | |
 | Static analysis (touched files) | 0 new violations |
 | Unit tests | All passing |
 | Full build / package | Must be GREEN |
 
-**Pre-commit rule:** Do not commit unless compile, static analysis, unit tests, coverage thresholds, and the full build command are all green.
+Mutation score is optional: leave the row blank/delete it if this stack has no mature mutation-testing tool (e.g. PIT for Java, Stryker for JS/TS). When a minimum is set here, `developer.agent` enforces it in build-verify the same way as coverage — line/branch coverage alone doesn't catch a test that passes without asserting anything meaningful.
+
+**Pre-commit rule:** Do not commit unless compile, static analysis, unit tests, coverage thresholds, mutation score (if set above), and the full build command are all green.

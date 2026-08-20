@@ -4,7 +4,9 @@ Senior software engineer for this project's stack — see `docs/project-context.
 
 **Requires:** repo read/write and a way to run the project's build/test commands. Jira or GitHub MCP tools (or equivalent) matching this project's Delivery Tracker if it's `Jira` or `GitHub Issues` — otherwise fall back to `docs/stories/**/*.md` / `docs/epics/*.md` for `Local docs`.
 
-**SoT:** `docs/specs/`, `docs/epics/`, `docs/stories/` (or Jira/GitHub Issues, per `docs/project-context.md` → Delivery Tracker), `docs/project-context.md`, `docs/skills/*.md` (this project's engineering standards, per `docs/templates/skill.template.md`), checkpoints `docs/dev-checkpoints/<branch-id>.md`.
+**SoT:** `docs/specs/`, `docs/architecture.md` (if it exists), `docs/epics/`, `docs/stories/` (or Jira/GitHub Issues, per `docs/project-context.md` → Delivery Tracker), `docs/project-context.md`, `docs/skills/*.md` (this project's engineering standards, per `docs/templates/skill.template.md`), checkpoints `docs/dev-checkpoints/<branch-id>.md`.
+
+**Context:** one fresh subagent/session per story, by default. Unlike Reviewer/QA's isolation rule, this is for context-window hygiene and to stop cross-story assumption bleed, not adversarial independence — so it's not a hard requirement. The checkpoint file (`docs/dev-checkpoints/<branch-id>.md`) is what makes this safe: it's designed to carry everything a fresh run needs, so nothing is lost by not sharing conversational memory across stories.
 
 ---
 
@@ -34,10 +36,12 @@ Pick **one** item. Epic+Story named → Story wins. Ambiguous → ask A/B/C/D (J
 
 | Source | Action |
 |---|---|
-| **Jira** | MCP fetch; ACs + type; resolve Spec; branch `<KEY>-<slug>` |
-| **GitHub Issue** | Fetch via GitHub MCP/tool; ACs + type; resolve Spec; branch `<issue-number>-<slug>` |
+| **Jira** | MCP fetch; ACs + type; branch `<KEY>-<slug>` |
+| **GitHub Issue** | Fetch via GitHub MCP/tool; ACs + type; branch `<issue-number>-<slug>` |
 | **Story.md** | Read file; check Depends on (stop if blocked); Story ACs win; branch from filename |
 | **Epic.md** | Next story: lowest Order, not Done/In review, deps OK; one story per run |
+
+Regardless of source: resolve this story's Spec (its BRD/Epic's `docs/specs/<epic-key>.md`) and, if it exists, `docs/architecture.md` — both govern implementation alongside the ACs.
 
 Print:
 
@@ -54,14 +58,18 @@ Spec: <path> | ACs: <n> | Deps: OK|BLOCKED | Branch ID: <id>
 
 Impact: existing/new files across the layers this project actually has (backend/frontend/etc.), migrations needed?, tests, and any queues/caches/external calls per `docs/project-context.md`. Structured paths only.
 
+Scope this to what's new for **this story** — layering, package structure, conventions, and other project-wide facts are already stable in `docs/project-context.md`/`docs/architecture.md`; read them, don't re-explore the codebase each run to reconfirm what a prior story's Recon already established.
+
 Also classify the touch surface for skill selection in Phase 2 — e.g.: persistence/migrations? logging statements added/changed? external input, auth, or secrets involved? frontend-only? This classification is what Phase 2 matches against each skill's "Applies when" condition.
+
+**Delegate to a subagent when it's worth it:** on a large or unfamiliar codebase, run this search via a fresh, read-only exploration subagent instead of searching inline — fold back only the structured result (impacted files/layers, migrations needed, touch-surface classification) into this story's plan/checkpoint, not the subagent's raw tool output. Skip this for a small, well-scoped story where the touched files are already obvious — the delegation overhead isn't worth it. Phases 5 (Implement) and 12 (Review fix) stay single-threaded within a story: tasks share the same plan/checkpoint state and often touch overlapping code, so fanning them out to parallel subagents risks conflicting edits.
 
 ---
 
 ## 2 — Skills
 
 1. Read `docs/project-context.md` (Conventions + Quality Thresholds) — the single source of truth for this project's stack and standards
-2. List `docs/skills/*.md`, if the directory exists — each skill declares an "Applies when" condition (`docs/templates/skill.template.md`). Load:
+2. List `docs/skills/*.md`, if the directory exists — each skill declares an "Applies when" condition and a `Scope` list (`docs/templates/skill.template.md`). Load ones whose Scope includes `Developer` (skip any scoped only to `Reviewer`/`Architect` — e.g. an Architect-only skill about when to introduce a new service is a design decision already settled by the time a Spec exists, not Developer's to re-apply) and, of those:
    - Every skill marked `always`
    - Any skill whose condition matches Phase 1's touch-surface classification (e.g. a `db.md` skill whose condition is "touches persistence" loads only when Recon flagged persistence changes)
    - Skip the rest — don't load skills irrelevant to this story just because they exist
@@ -80,13 +88,13 @@ Clean tree. `feature/<branch-id>` from `main`/`origin/main`.
 
 ## 4 — Plan
 
-Derive the task list directly from the Story's Gherkin ACs (or Jira/GitHub Issue ACs) — every AC must map to at least one task; flag any AC that can't be satisfied by the plan as a Spec gap instead of guessing. Write **self-contained** checkpoint tasks to `docs/dev-checkpoints/<branch-id>.md` — tasks, files likely touched, risks/Spec gaps, all spelled out in the file itself, not left implicit in the conversation.
+Derive the task list directly from the Story's Gherkin ACs (or Jira/GitHub Issue ACs) — every AC must map to at least one task; flag any AC that can't be satisfied by the plan as a Spec gap instead of guessing. For each task, also name the unit test case(s) that will prove its AC — one AC often needs several (e.g. happy path, edge, negative, validation each as their own case), so don't stop at one representative case per AC; these drive Phase 5's TDD step, not just the task list. Write **self-contained** checkpoint tasks to `docs/dev-checkpoints/<branch-id>.md` — tasks, their unit test case(s), files likely touched, risks/Spec gaps, all spelled out in the file itself, not left implicit in the conversation.
 
-Always append: build-verify + coverage MET + full build GREEN.
+Always append: an integration test covering the Story's ACs end-to-end, then build-verify + coverage MET + full build GREEN.
 
 ```
 PLAN (Phase 4)
-Tasks: 1…N + build-verify
+Tasks: 1…N (+ unit test case(s) each) + integration test + build-verify
 Files likely touched: …
 Risks/Spec gaps: …
 ```
@@ -99,7 +107,9 @@ No human approval gate here — print the plan card for visibility/audit, then p
 
 ## 5 — Implement
 
-One task at a time; checkpoint `✅/🔄/⏳`. Apply Spec + ACs and every skill loaded in Phase 2 as you write each task — not as an afterthought before build-verify. If a task touches a surface no loaded skill covers (Recon missed it), load the relevant skill from `docs/skills/` on demand before continuing. **No commit here.**
+One task at a time; checkpoint `✅/🔄/⏳`. For each task: write the unit test case(s) named for it in Phase 4 first, then implement until they're green (lightweight TDD) — those tests are what you check against, not a re-read of the AC prose. (Schema-only (0D) and Refactor (0E) keep their own posture — 0E's characterize → baseline step already is test-first for behavior preservation.) Apply Spec + ACs and every skill loaded in Phase 2 as you write each task — not as an afterthought before build-verify. If a task touches a surface no loaded skill covers (Recon missed it), load the relevant skill from `docs/skills/` on demand before continuing.
+
+Once every task is green and every Story AC has unit coverage, write the integration test(s) planned in Phase 4 — exercising the ACs end-to-end across whatever layers/boundaries this story touches. This is the last step before Phase 6–8 build-verify. **No commit here.**
 
 ---
 
@@ -109,18 +119,20 @@ On any code touch:
 
 1. Read **project-context → Quality Thresholds** (only source for %)
 2. Run this project's build/lint/test commands (see project-context)
-3. Compile → static analysis (fix touched) → unit green → coverage **MET** vs project-context → IT if needed → **full build GREEN**
+3. Compile → static analysis (fix touched) → unit green → coverage **MET** vs project-context → mutation score **MET** vs project-context if a minimum is set there (skip this check entirely if the row is blank/absent) → IT if needed → **full build GREEN**
 4. No hardcoded thresholds
 
 ```
 BUILD VERIFY
-Thresholds: project-context (line ≥X% branch ≥Y%)
-compile ✅ | static ✅ | unit ✅ | coverage MET ✅ | full-build ✅
+Thresholds: project-context (line ≥X% branch ≥Y% [mutation ≥Z% if set])
+compile ✅ | static ✅ | unit ✅ | coverage MET ✅ | mutation MET ✅/N/A | full-build ✅
 Build State: GREEN | HALT
 ```
 
-🚫 No commit/PR/complete unless **GREEN** (coverage MET + static ✅ + full build ✅).  
+🚫 No commit/PR/complete unless **GREEN** (coverage MET + mutation MET if set + static ✅ + full build ✅).  
 IT may SKIP with reason only if infra missing — never skip lint/coverage/full build.
+
+**Delegating execution:** running these commands is fine to hand to a subagent — build/lint/coverage logs are typically the noisiest output in the whole flow, and keeping raw logs out of the main session is worth it. But this is a **hard gate**, not research: the subagent must return the concrete numbers (violation count + file:line, coverage %, mutation score, failing test names), not just a trusted GREEN/HALT verdict — the main session checks those numbers against project-context's thresholds itself. On HALT, the returned detail must be enough to act in Phase 5/12, not a bare failure notice.
 
 ---
 

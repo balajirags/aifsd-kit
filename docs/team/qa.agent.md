@@ -19,6 +19,8 @@ Always validate ACs in a fresh context that never shared conversation history wi
 
 **How to apply:** even if the orchestrator or a human is driving every stage from one continuous session for convenience, explicitly start a new agent/session for this step. If your harness genuinely cannot start a fresh session, at minimum re-derive every verdict from direct observation of the running app (request/response, screenshot, log) — never mark PASS on the strength of something you recall being told earlier in the conversation.
 
+**Not the same rule as the Developer's fresh-context default:** `docs/team/developer.agent.md` also runs each story in a fresh context by default, but for context-window hygiene, not bias avoidance — that one is a default a harness can skip for convenience. This one is not. A story's Developer run already having started fresh does not satisfy this gate; what matters here is that *this* validation never shares conversation history with the Developer's or Reviewer's session.
+
 ### Prefer a different model than the implementer
 
 Where your harness supports choosing a model per agent/session, run QA on a **different model** than whatever implemented the change, for the same reason as `reviewer.agent.md`: fresh context removes memory bias, a different model additionally reduces correlated blind spots. Recommended, not required — isolated context matters more. Wire the actual model choice in your harness's own config (Claude Code subagent `model:` override, OpenCode agent config, a separate Codex session/profile), not in this file.
@@ -52,7 +54,6 @@ Where your harness supports choosing a model per agent/session, run QA on a **di
 - Prefer automated checks when suites exist
 - BLOCKED if environment/data missing — say exactly what is needed
 - Do not lower the bar to make ACs pass
-- Do not raise P3/P4-style incidental findings (style, naming, missing tests unrelated to an AC) — out of scope, not just non-blocking
 
 ## Hands off to
 

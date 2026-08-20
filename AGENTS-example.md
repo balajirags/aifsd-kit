@@ -12,12 +12,15 @@ This repo uses an **AI-augmented delivery kit**. Prefer following the roles/gate
 ## Delivery model
 
 ```text
- Stories + ACs → Plan → Implement → Build-verify → Review → QA
+ BRD(s) or Story(s) → Stories + Gherkin ACs → Plan (tasks + test cases) → Implement (test-first: unit → integration) → Build-verify → Review → QA
 ```
 
-- **Spec is law** for API, schema, cache, messaging, FE impact
+- The Orchestrator takes a queue of BRDs, Epics, and/or already-groomed Stories. Whether BA runs depends on **state, not label**: no groomed story yet for this item → BA grooms it first; a groomed story already exists (a BRD groomed in an earlier pass, an Epic with ready stories, or a standalone Jira key/GitHub issue/`docs/stories/**/*.md`) → skip BA, straight to Developer; see `docs/process.md` → Orchestrator for the full lifecycle graph
+- Those BRDs (and the PRD/Spec behind them) can be hand-authored, or built with the optional `docs/discovery/` co-authoring agents (`to-prd` → `to-brd` → `architect`) — see Upstream authoring below. The Orchestrator's graph is unchanged either way
+- **Spec is law** for API, schema, cache, messaging, FE impact — `docs/architecture.md` governs too, when it exists
 - **One BRD = one Epic**; do not split Frontend BRD vs Backend BRD
-- **One developer run = one story** (unless user explicitly asks otherwise)
+- **BA grooms each BRD in a fresh context by default** — same context-window-hygiene reasoning as the developer's per-story default below, not the adversarial isolation Reviewer/QA require (see `docs/team/ba.agent.md` → Context)
+- **One developer run = one story**, in a fresh context by default (context-window hygiene, not the adversarial isolation Reviewer/QA require — see `docs/process.md` → Developer rules), unless user explicitly asks otherwise
 - No guild blackboard — Jira and/or `docs/` are the source of truth
 
 ## Roles (`docs/team/`)
@@ -29,7 +32,19 @@ This repo uses an **AI-augmented delivery kit**. Prefer following the roles/gate
 | Code review | `reviewer.agent.md` |
 | AC validation | `qa.agent.md` |
 
-PRD, BRD, and Technical Spec are **template-driven, not agent-driven**, in this kit — author them by hand (or with your harness's general assistant) against `docs/templates/prd.template.md`, `brd.template.md`, and `spec.template.md`. Add a dedicated `prd`/`brd`/`architect` role under `docs/team/` if your team wants one; none ships today.
+PRD, BRD, and Technical Spec are authored **upstream of this pipeline** — by hand against `docs/templates/prd.template.md`, `brd.template.md`, and `spec.template.md`, or with the optional co-authoring agents below. Either way they're the same artifacts; the pipeline above doesn't care how they were produced.
+
+## Upstream authoring (optional, human-driven — `docs/discovery/`)
+
+Not part of the Orchestrator's lifecycle graph — sustained, human-in-the-loop co-authoring sessions that produce the artifacts the pipeline above consumes. Persistence works differently here: the PRD/BRD/Spec file itself, saved incrementally, makes a session resumable across sittings — not a fresh-context-per-run default or a checkpoint file like the pipeline roles use.
+
+| Stage | Role | Produces | Human gate |
+|---|---|---|---|
+| Brainstorm → PRD | `to-prd.agent.md` | `docs/prd/<initiative-slug>.md` | PRD `Gate 0` checkbox |
+| PRD → BRD(s) | `to-brd.agent.md` | `docs/brd/<epic-slug>.md` (one per Epic) | BRD `Status: Ready for Spec` |
+| BRD → HLD + Spec | `architect.agent.md` | `docs/architecture.md` (HLD, spans all BRDs) + `docs/specs/<epic-key>.md` per BRD | HLD `Status: Approved` **and** every Spec `Status: Approved` |
+
+Execution doesn't start on a subset. `architect.agent.md` runs a **Finalization check** — PRD approved, every BRD Ready for Spec, the HLD approved, every Spec approved — before handing the whole initiative to the Orchestrator's own graph at `docs/team/ba.agent.md`. One BRD's Spec being Approved doesn't by itself start execution.
 
 ## Skills (`docs/skills/`, project-authored)
 
@@ -46,10 +61,12 @@ Before any commit after code changes: run this project's build/lint/test command
 | `docs/prd/` | Product requirements |
 | `docs/brd/` | Business requirements |
 | `docs/epics/` | Epic tracker (markdown when Jira Epic pending) |
-| `docs/specs/` | Technical Spec (Gate 1) |
+| `docs/specs/` | Technical Spec (Gate 1) — one per BRD/Epic |
+| `docs/architecture.md` | Optional cross-cutting architecture doc (system-wide, beyond any one BRD's Spec) — `developer.agent.md` reads it alongside the Spec when it exists |
 | `docs/stories/` | Stories + ACs when Jira unavailable |
 | `docs/templates/` | PRD / BRD / Spec / Story / project-context / skill templates |
 | `docs/team/` | Per-role agent behavior specs (ba, developer, reviewer, qa) |
+| `docs/discovery/` | Optional human-driven PRD → BRD → Spec co-authoring agents (to-prd, to-brd, architect) — see Upstream authoring above |
 | `docs/skills/` | This project's engineering-standard skills (empty in the kit; add your own) |
 | `docs/dev-checkpoints/` | Developer task checkpoints |
 | `docs/example/` | A fully filled-in worked example of this kit (fictional project) — copy the kit files above, not this folder |
@@ -72,7 +89,7 @@ Frontend:  npx tsc --noEmit
            npm run build
 ```
 
-Coverage minima come **only** from `docs/project-context.md` → Quality Thresholds.
+Coverage and mutation-score minima (if set) come **only** from `docs/project-context.md` → Quality Thresholds.
 
 ## Living docs
 

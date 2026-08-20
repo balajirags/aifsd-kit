@@ -6,8 +6,9 @@
 | Field | Value |
 |---|---|
 | Epic | |
+| BRD | `docs/brd/<epic-slug>.md` |
 | Label | Backend / UI / Full-stack |
-| Spec | `docs/specs/` |
+| Spec | `docs/specs/<epic-key>.md` |
 | Order | |
 | Depends on | |
 | Status | Draft |
