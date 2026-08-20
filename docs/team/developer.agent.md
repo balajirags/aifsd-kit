@@ -60,7 +60,7 @@ Impact: existing/new files across the layers this project actually has (backend/
 
 Scope this to what's new for **this story** — layering, package structure, conventions, and other project-wide facts are already stable in `docs/project-context.md`/`docs/architecture.md`; read them, don't re-explore the codebase each run to reconfirm what a prior story's Recon already established.
 
-Also classify the touch surface for skill selection in Phase 2 — e.g.: persistence/migrations? logging statements added/changed? external input, auth, or secrets involved? frontend-only? This classification is what Phase 2 matches against each skill's "Applies when" condition.
+Also classify the touch surface for skill selection in Phase 2 — e.g.: persistence/migrations? logging statements added/changed? external input, auth, or secrets involved? frontend-only? This classification is what Phase 2 judges each `Always load: No` skill's relevance against.
 
 **Delegate to a subagent when it's worth it:** on a large or unfamiliar codebase, run this search via a fresh, read-only exploration subagent instead of searching inline — fold back only the structured result (impacted files/layers, migrations needed, touch-surface classification) into this story's plan/checkpoint, not the subagent's raw tool output. Skip this for a small, well-scoped story where the touched files are already obvious — the delegation overhead isn't worth it. Phases 5 (Implement) and 12 (Review fix) stay single-threaded within a story: tasks share the same plan/checkpoint state and often touch overlapping code, so fanning them out to parallel subagents risks conflicting edits.
 
@@ -69,10 +69,10 @@ Also classify the touch surface for skill selection in Phase 2 — e.g.: persist
 ## 2 — Skills
 
 1. Read `docs/project-context.md` (Conventions + Quality Thresholds) — the single source of truth for this project's stack and standards
-2. List `docs/skills/*.md`, if the directory exists — each skill declares an "Applies when" condition and a `Scope` list (`docs/templates/skill.template.md`). Load ones whose Scope includes `Developer` (skip any scoped only to `Reviewer`/`Architect` — e.g. an Architect-only skill about when to introduce a new service is a design decision already settled by the time a Spec exists, not Developer's to re-apply) and, of those:
-   - Every skill marked `always`
-   - Any skill whose condition matches Phase 1's touch-surface classification (e.g. a `db.md` skill whose condition is "touches persistence" loads only when Recon flagged persistence changes)
-   - Skip the rest — don't load skills irrelevant to this story just because they exist
+2. List `docs/skills/*.md`, if the directory exists — skills are agent-agnostic, no declared trigger to match (`docs/templates/skill.template.md`):
+   - Load every skill marked `Always load: Yes`
+   - For the rest, read each one and judge from its name/content whether it's relevant to Phase 1's touch surface for this story (e.g. `db.md` is relevant if this story touches persistence) — load if so, skip if not
+   - Don't load skills irrelevant to this story just because they exist. A skill that's inherently about a design-time decision (e.g. "when to introduce a new service boundary") naturally reads as irrelevant during implementation of an already-approved Spec, so it self-excludes on judgment alone
 3. If `docs/skills/` doesn't exist or is empty, proceed without it — it's optional, not a blocker
 4. Schedule the project's build-verify command(s) for Phases 6–8
 

@@ -31,7 +31,7 @@ This kit doesn't hardcode a model name here since it varies per team/harness; wi
 ## Standards to load for criteria
 
 - `docs/project-context.md` — this project's stack, conventions, and Quality Thresholds
-- `docs/skills/*.md` whose Meta `Scope` list includes `Reviewer` (per `docs/templates/skill.template.md`): load ones marked `always`, plus any whose `Applies when` condition matches the file categories from Phase 1 (e.g. a Reviewer-scoped `db.md` loads when Migrations files are in the diff). Skip anything whose Scope doesn't include `Reviewer` (e.g. `Scope: Developer` alone, as `clean-code.md` would be) — style/nits are out of this agent's scope by design, regardless of what a skill file says.
+- `docs/skills/*.md` — agent-agnostic, no declared trigger (per `docs/templates/skill.template.md`): load every skill marked `Always load: Yes`; for the rest, read each one and judge from its content whether it's relevant to the file categories from Phase 1 (e.g. `db.md` is relevant if Migrations files are in the diff). Apply only its P1/P2-relevant rules regardless — style/nits are out of this agent's scope by design, even from a fully-loaded skill file (e.g. `clean-code.md`'s style rules never surface here, but a P2-relevant rule in the same file would).
 - These skills are **project-specific rules layered on top of** the baseline P1/P2 categories in Phase 2, not a replacement — the baseline rubric below works even when `docs/skills/` is empty or doesn't exist.
 - Spec: `docs/specs/<epic>.md` + Story ACs (Jira or `docs/stories/...`)
 
@@ -140,7 +140,7 @@ Do **not** raise code-quality, style, or missing-test findings here — they are
 - Non-backward-compatible migration without expand/contract notes
 - Migration not justified by Spec for this story
 
-### Project skills (`docs/skills/*.md` scoped to include `Reviewer`)
+### Project skills (`docs/skills/*.md`, loaded per Standards above)
 
 Apply the rules from each loaded skill file, but only where they describe a P1 (security/critical) or P2 (Spec/architecture/boundary drift) condition — a skill file may contain style guidance too; ignore that part here. Tag findings from a skill file with its filename (e.g. `[P2 skills/db.md]`) instead of folding them silently into the baseline categories above.
 

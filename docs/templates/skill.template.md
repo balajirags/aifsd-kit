@@ -1,22 +1,16 @@
 # Skill Template
 
 > Owner: whoever owns engineering standards for this repo · Path: `docs/skills/<skill-slug>.md`
-> One skill = one concern (e.g. `security.md`, `db.md`, `logging.md`). Keep each self-contained — developer.agent loads skills individually, not as a bundle.
+> One skill = one concern (e.g. `security.md`, `db.md`, `logging.md`). Keep each self-contained — every agent loads skills individually, not as a bundle.
 
 ## Meta
 
 | Field | Value |
 |---|---|
 | Skill | `<name>` |
-| Applies when | `always` \| `<condition Recon can check, e.g. "touches persistence">` |
-| Scope | Which agents load this: `Developer` \| `Reviewer` \| `Architect` — comma-separate any that apply (e.g. `Developer, Reviewer`) |
+| Always load | Yes \| No |
 
-Scope only controls who loads a skill at all — each agent still applies only the part relevant to its own job (e.g. Reviewer and Architect ignore pure style/naming guidance even in a skill scoped to them).
-
-## When to load
-
-<!-- One or two lines a Recon step can pattern-match against, e.g.:
-"Story touches a datastore: new/changed entity, repository, migration, or raw query." -->
+No role/agent tag and no declared trigger condition — skills are **agent-agnostic**, and relevance is judged, not matched. Any agent (Developer, Reviewer, Architect, or others this kit adds later) lists `docs/skills/*.md` and, for each one where **Always load** is `No`, decides from the skill's own name and content whether it's relevant to the task at hand — no separate condition string to keep in sync with the content. `Always load: Yes` skips that judgment entirely (e.g. a blanket security policy that should never be skipped). Each agent still applies only the guidance relevant to its own job either way (e.g. Reviewer applies only P1/P2-relevant rules from a loaded skill; Architect applies only design-level ones) — that filtering is the loading agent's own responsibility, driven by its own rubric.
 
 ## Rules
 
