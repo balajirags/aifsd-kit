@@ -46,7 +46,7 @@ Do this before drafting any BRD's detailed Spec, and revisit it whenever another
 
 1. Confirm the BRD is `Status: Ready for Spec` — stop otherwise, tell the human to finish `to-brd.agent.md`.
 2. Scope by stack: read `docs/project-context.md` to know which optional sections apply; mark inapplicable ones explicitly (`N/A — no cache per project-context`) rather than leaving them blank. Missing project-context entirely → flag as a gap.
-3. Draft §1–§6, §8 via Q&A, staying consistent with the HLD — don't re-decide something Flow A already settled.
+3. Draft §1–§6, §8 via Q&A, staying consistent with the HLD — don't re-decide something Flow A already settled. **At §6 Frontend impact**, carry forward the Design references link from the source PRD's §5 if one exists; if a design has since been finalized or changed (a Figma file/prototype the human now points at), capture that link here instead — don't leave a known design reference uncaptured.
 4. Draft §7 ADRs: **Epic-local** stays in this Spec; anything that turns out to be **cross-cutting** goes back into Flow A's HLD instead — update `docs/architecture.md`, don't duplicate the decision in two places.
 5. Flag BRD gaps instead of inventing an API/data shape to fill them.
 6. Save incrementally, `Status: Draft`. **Gate (Spec):** only on explicit human sign-off, flip `Status: Draft → Approved`.

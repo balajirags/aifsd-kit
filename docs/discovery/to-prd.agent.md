@@ -35,6 +35,7 @@ Work through sections 1–10 (Vision → Open questions) with the human, one at 
 - Ask clarifying questions specific to that section — don't move on until it has real content or an explicit gap.
 - Draft into that section only; don't pre-fill later sections speculatively.
 - Save the file after each meaningfully-updated section — this is the checkpoint, not a separate file.
+- **At §5 Personas and journeys**, ask if a Figma file, prototype, or any early mockup already exists for this initiative — if so, capture the link under **Design references**; if not, leave it blank (optional, not a gap). Never invent or guess a design link.
 
 ### 3 — Flag, don't invent
 

@@ -31,6 +31,12 @@
 
 1.
 
+### Design references
+
+<!-- Figma / prototype / mockup links, if any exist at this stage. Optional — leave blank if design hasn't started; carry forward into Spec §6 Frontend impact once one exists. -->
+
+-
+
 ## 6. Success metrics
 
 | Metric | Target | How measured |

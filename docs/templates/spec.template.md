@@ -52,6 +52,7 @@
 
 ## 6. Frontend impact
 
+- Design reference (Figma / prototype): <!-- carry forward from PRD §5 Design references if one exists, or link the finalized design here -->
 - Routes/pages:
 - Components/state:
 - API client methods:
