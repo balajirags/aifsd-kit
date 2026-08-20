@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI-Augmented Delivery Kit — Setup Guide</title>
+
+  <!-- Reveal.js core -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Custom styles -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Chart.js for data visualization -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <section id="divider-1" class="section-divider" data-state="is-section-divider">
+        <p class="eyebrow text-uppercase">Setup &amp; Onboarding Guide</p>
+        <h1>AI-Augmented<br>Delivery Kit</h1>
+        <p>How to adopt the kit and get your first story shipped</p>
+      </section>
+
+      <section id="slide-2">
+        <h2>What Is This Kit?</h2>
+        <div class="content">
+          <p class="text-xl">A portable, harness-agnostic set of process docs, role specs, and templates — copied into your repo so any AI coding agent works your initiatives the same way.</p>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 22px;">
+            <div class="stage-card">
+              <h3><i class="fa-solid fa-file-lines"></i> Not an app</h3>
+              <p>No source code here — every file is Markdown: process, roles, templates.</p>
+            </div>
+            <div class="stage-card accent-teal">
+              <h3><i class="fa-solid fa-arrows-turn-to-dots"></i> Harness-agnostic</h3>
+              <p>Works with Claude Code, GitHub Copilot, OpenCode, Codex, and others.</p>
+            </div>
+            <div class="stage-card accent-warn">
+              <h3><i class="fa-solid fa-copy"></i> Copy, don't fork</h3>
+              <p>You copy the kit files into your own repo — this repo just ships them.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="slide-3">
+        <h2>What Changes For Your Team</h2>
+        <div class="content">
+          <p class="text-lg">Two connected stages replace ad-hoc, chat-driven development:</p>
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 26px; margin-top: 12px;">
+            <div class="stage-card">
+              <span class="pill pill-gate">Optional</span>
+              <h3 style="margin-top:12px;"><i class="fa-solid fa-lightbulb"></i> Discovery</h3>
+              <p>Brainstorm a PRD, break it into BRDs (one per Epic), then design a Spec and HLD for each — each stage gated on human sign-off.</p>
+            </div>
+            <div class="stage-card accent-teal">
+              <span class="pill pill-approve">Orchestrator-driven</span>
+              <h3 style="margin-top:12px;"><i class="fa-solid fa-gears"></i> Delivery</h3>
+              <p>A fixed loop: BA grooms stories → Developer implements → Reviewer verdicts → QA validates — looping on failure, escalating on repeat blockers.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="slide-4">
+        <h2>Two Properties That Matter Most</h2>
+        <div class="content">
+          <div class="flow-step teal">
+            <div class="num"><i class="fa-solid fa-check"></i></div>
+            <div>
+              <p class="text-lg"><strong>Nothing merges without evidence.</strong></p>
+              <p>Build-verify must be GREEN, Reviewer must APPROVE (zero P1/P2), QA must PASS every AC — or a human explicitly waives it.</p>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="num"><i class="fa-solid fa-user-secret"></i></div>
+            <div>
+              <p class="text-lg"><strong>Review and QA are adversarial by design.</strong></p>
+              <p>Both run in a fresh session that never inherited the Developer's conversation — checking the diff cold, not confirming what they were told.</p>
+            </div>
+          </div>
+          <blockquote>You don't have to use every stage — see "Ways to Enter the Loop."</blockquote>
+        </div>
+      </section>
+
+      <section id="divider-2" class="section-divider" data-state="is-section-divider">
+        <p class="eyebrow text-uppercase">Part 1</p>
+        <h1>The Full Picture</h1>
+        <p>From a rough idea to a merged, reviewed, tested change</p>
+      </section>
+
+      <section id="slide-6">
+        <h2>Discovery: Idea → Finalized Design</h2>
+        <div class="content">
+          <div class="flow-step">
+            <div class="num">1</div>
+            <div><p><code>to-prd.agent.md</code> — brainstorm → <strong>PRD</strong> <span class="pill pill-gate">Gate 0 approved</span></p></div>
+          </div>
+          <div class="flow-step">
+            <div class="num">2</div>
+            <div><p><code>to-brd.agent.md</code> — PRD → <strong>BRD(s)</strong>, one per Epic <span class="pill pill-gate">Ready for Spec</span></p></div>
+          </div>
+          <div class="flow-step teal">
+            <div class="num">3</div>
+            <div><p><code>architect.agent.md</code> — BRD → <strong>HLD</strong> (<code>docs/architecture.md</code>) + <strong>Spec</strong> per BRD <span class="pill pill-approve">Approved</span></p></div>
+          </div>
+          <div class="flow-step warn">
+            <div class="num"><i class="fa-solid fa-flag-checkered"></i></div>
+            <div><p><strong>Finalization check</strong> — PRD + every BRD + the HLD + every Spec all done before execution starts on <em>any</em> of it.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="slide-7">
+        <h2>Delivery: The Orchestrator Loop</h2>
+        <div class="content">
+          <div class="flow-step">
+            <div class="num"><i class="fa-solid fa-list-check"></i></div>
+            <div><p>Pick next queue item — groomed story exists? <strong>No</strong> → <code>ba.agent</code> grooms it. <strong>Yes</strong> → skip straight through.</p></div>
+          </div>
+          <div class="flow-step">
+            <div class="num"><i class="fa-solid fa-code"></i></div>
+            <div><p><code>developer.agent</code> implements — fresh context per story, test-first, build-verify gate</p></div>
+          </div>
+          <div class="flow-step teal">
+            <div class="num"><i class="fa-solid fa-magnifying-glass"></i></div>
+            <div><p><code>reviewer.agent</code> (fresh, isolated) — <span class="pill pill-approve">APPROVE</span> → QA &nbsp;|&nbsp; <span class="pill pill-block">REQUEST_CHANGES</span> &lt;2 cycles → back to Developer, ≥2 → escalate to human</p></div>
+          </div>
+          <div class="flow-step">
+            <div class="num"><i class="fa-solid fa-vial-circle-check"></i></div>
+            <div><p><code>qa.agent</code> (fresh, isolated) — <span class="pill pill-approve">PASS</span> → close story, next one &nbsp;|&nbsp; <span class="pill pill-block">FAIL</span> → back to Developer</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="divider-3" class="section-divider" data-state="is-section-divider">
+        <p class="eyebrow text-uppercase">Part 2</p>
+        <h1>Ways to Enter the Loop</h1>
+        <p>You don't have to start at the top</p>
+      </section>
+
+      <section id="slide-9">
+        <h2>Pick Your Starting Point</h2>
+        <div class="content">
+          <table>
+            <thead>
+              <tr><th>Starting point</th><th>What you skip</th><th>Use when</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Brainstorm with <code>to-prd.agent.md</code></td><td>Nothing — full discovery chain</td><td>New initiative, nothing written down yet</td></tr>
+              <tr><td>Hand-write a BRD (<code>brd.template.md</code>)</td><td>Discovery agents entirely</td><td>You already know the business requirements</td></tr>
+              <tr><td>Hand-write a Spec (<code>spec.template.md</code>)</td><td>PRD/BRD authoring</td><td>The BRD exists, you just need the technical contract</td></tr>
+              <tr><td>Point at an already-groomed Story</td><td>BA grooming entirely</td><td>A story with ACs already exists</td></tr>
+            </tbody>
+          </table>
+          <p class="text-muted" style="margin-top: 18px;">The Orchestrator's queue mixes all of these — it decides by <strong>state</strong> (is there a groomed story yet?), never by label.</p>
+        </div>
+      </section>
+
+      <section id="divider-4" class="section-divider" data-state="is-section-divider">
+        <p class="eyebrow text-uppercase">Part 3</p>
+        <h1>Getting Started</h1>
+        <p>Five steps to your first story</p>
+      </section>
+
+      <section>
+        <section id="slide-11-1">
+          <h2>Step 1 — Copy the Kit Files</h2>
+          <div class="content">
+            <div class="step-badge">1</div>
+            <ul class="text-lg">
+              <li><code>AGENTS-example.md</code> → <code>AGENTS.md</code></li>
+              <li><code>CLAUDE-example.md</code> → <code>CLAUDE.md</code> (Claude Code only)</li>
+              <li><code>docs/process.md</code></li>
+              <li><code>docs/team/</code> — ba, developer, reviewer, qa</li>
+              <li><code>docs/templates/</code> — PRD / BRD / Spec / Story / project-context / skill</li>
+              <li><code>docs/discovery/</code> — optional: to-prd, to-brd, architect</li>
+            </ul>
+            <blockquote>Do <strong>not</strong> copy <code>docs/example/</code> — it's a worked reference to read, not kit content.</blockquote>
+          </div>
+        </section>
+        <section id="slide-11-2">
+          <h2>Step 2 — Fill In <code>project-context.md</code></h2>
+          <div class="content">
+            <div class="step-badge">2</div>
+            <p class="text-lg">The single most important step — copy from <code>project-context.template.md</code> and fill in every section.</p>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin-top: 14px;">
+              <div class="stage-card">
+                <h3>Your stack</h3>
+                <p>Languages, frameworks, source layout, conventions, build/lint/test commands</p>
+              </div>
+              <div class="stage-card accent-teal">
+                <h3>Quality Thresholds</h3>
+                <p>Coverage minima, and an optional mutation-score minimum</p>
+              </div>
+              <div class="stage-card accent-warn" style="grid-column: span 2;">
+                <h3>Delivery Tracker</h3>
+                <p><code>Jira</code> / <code>GitHub Issues</code> / <code>Local docs</code> — every role file reads this to know where stories live</p>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section id="slide-11-3">
+          <h2>Step 3 — Add Project Skills <span class="text-muted">(optional)</span></h2>
+          <div class="content">
+            <div class="step-badge">3</div>
+            <p class="text-lg">Engineering-standard rules under <code>docs/skills/</code> per <code>skill.template.md</code> — security, db conventions, logging, whatever your project needs.</p>
+            <ul class="text-lg">
+              <li>Empty is fine to start</li>
+              <li>No role tag — skills are agent-agnostic</li>
+              <li>Any agent loads a skill marked <code>Always load: Yes</code>, and judges the rest itself</li>
+            </ul>
+          </div>
+        </section>
+        <section id="slide-11-4">
+          <h2>Step 4 — Wire Into Your Coding Agent</h2>
+          <div class="content">
+            <p>Guaranteed everywhere: point your agent at a file directly — <em>"follow AGENTS.md."</em> On top of that:</p>
+            <table>
+              <thead><tr><th>Harness</th><th>How</th></tr></thead>
+              <tbody>
+                <tr><td>Claude Code</td><td><code>CLAUDE.md</code> (<code>@AGENTS.md</code>) auto-loads every session</td></tr>
+                <tr><td>GitHub Copilot</td><td>Point <code>.github/copilot-instructions.md</code> at <code>AGENTS.md</code></td></tr>
+                <tr><td>OpenCode / Codex / others</td><td>Reference <code>AGENTS.md</code> via your harness's instruction mechanism</td></tr>
+              </tbody>
+            </table>
+            <blockquote><code>docs/discovery/</code> agents are sustained, human-in-the-loop sessions — keep them interactive. <code>docs/team/</code> agents (Reviewer, QA) need the opposite: a fresh, isolated subagent every time.</blockquote>
+          </div>
+        </section>
+        <section id="slide-11-5">
+          <h2>Step 5 — Run It</h2>
+          <div class="content">
+            <div class="step-badge">5</div>
+            <div class="stage-card" style="margin-bottom: 18px;">
+              <h3><i class="fa-solid fa-seedling"></i> Starting from scratch</h3>
+              <p>"Follow <code>docs/discovery/to-prd.agent.md</code>, let's brainstorm a PRD for X."</p>
+            </div>
+            <div class="stage-card accent-teal">
+              <h3><i class="fa-solid fa-bolt"></i> Starting from a BRD or Story</h3>
+              <p>Tell your coding agent to follow <code>AGENTS.md</code> and point it at the BRD/Story — it resolves the right role itself.</p>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section id="divider-5" class="section-divider" data-state="is-section-divider">
+        <p class="eyebrow text-uppercase">Reference</p>
+        <h1>Key Documents</h1>
+        <p>Where everything lives</p>
+      </section>
+
+      <section id="slide-13">
+        <h2>Key Documents Map</h2>
+        <div class="content">
+          <table>
+            <thead><tr><th>Path</th><th>Purpose</th></tr></thead>
+            <tbody>
+              <tr><td><code>AGENTS.md</code></td><td>Portable entry point — read first by any agent</td></tr>
+              <tr><td><code>docs/process.md</code></td><td>Roles, gates, Orchestrator graph, Definition of Done</td></tr>
+              <tr><td><code>docs/project-context.md</code></td><td>Your stack, conventions, thresholds, tracker — <strong>you fill this in</strong></td></tr>
+              <tr><td><code>docs/team/</code></td><td>Pipeline roles: ba, developer, reviewer, qa</td></tr>
+              <tr><td><code>docs/discovery/</code></td><td>Optional: to-prd, to-brd, architect</td></tr>
+              <tr><td><code>docs/templates/</code></td><td>PRD / BRD / Spec / Story / project-context / skill</td></tr>
+              <tr><td><code>docs/example/</code></td><td>Worked instance — reference only, never copy</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="divider-6" class="section-divider" data-state="is-section-divider">
+        <p class="eyebrow text-uppercase">Read This First</p>
+        <h1>Gotchas</h1>
+        <p>Three things worth knowing up front</p>
+      </section>
+
+      <section id="slide-15">
+        <h2>Gotchas Worth Knowing Up Front</h2>
+        <div class="content">
+          <div class="flow-step warn">
+            <div class="num"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div><p><strong>Asymmetric circuit breaker.</strong> Reviewer↔Developer caps at 2 <code>REQUEST_CHANGES</code> cycles before escalating; QA↔Developer has no cap today. Known and intentional.</p></div>
+          </div>
+          <div class="flow-step">
+            <div class="num"><i class="fa-solid fa-lock"></i></div>
+            <div><p><strong>Hard rule vs. default.</strong> Reviewer/QA's fresh-context isolation is a hard rule — it's what makes the gate meaningful. Developer/BA's is a default a harness can skip for convenience.</p></div>
+          </div>
+          <div class="flow-step teal">
+            <div class="num"><i class="fa-solid fa-layer-group"></i></div>
+            <div><p><strong>Templates stay stack-agnostic.</strong> Project-specific facts belong in <code>docs/project-context.md</code>, never hardcoded into a role file.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="divider-7" class="section-divider" data-state="is-section-divider">
+        <p class="eyebrow text-uppercase">You're Ready</p>
+        <h1>Start With <code>AGENTS.md</code></h1>
+        <p>Copy the kit, fill in project-context.md, and ship your first story</p>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js-plugins@latest/chart/plugin.js"></script>
+  <script>
+    Reveal.initialize({
+      width: 1280,
+      height: 720,
+      margin: 0,
+      controls: true,
+      progress: true,
+      slideNumber: false,
+      hash: true,
+      transition: 'slide',
+      center: false,
+      plugins: [ RevealChart ],
+      chart: {
+        defaults: Object.assign({
+          color: 'rgba(0, 0, 0, 0.8)',
+          borderColor: 'rgba(0, 0, 0, 0.8)',
+          devicePixelRatio: 2
+        }, window.location.search.includes('export') ? { animation: false } : {})
+      }
+    });
+  </script>
+</body>
+</html>
