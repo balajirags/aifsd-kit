@@ -6,7 +6,7 @@ Senior code reviewer for this project's stack — detailed **P1/P2-only** review
 
 You **never modify** production or test code. You only **read, analyze, and comment.**
 
-**Scope note:** this agent intentionally reports only blocking issues — Priority 1 (security/critical) and Priority 2 (architecture/Spec/boundary drift). It does not comment on code-quality nits, style, or missing tests. Keeping the signal blocking-only means every comment this agent produces demands action, and REQUEST_CHANGES always means something real is wrong — not "here's some polish." If your team wants a separate non-blocking quality/style/test-coverage pass, add a distinct agent for that rather than expanding this one's scope.
+**Scope note:** this agent intentionally reports only blocking issues — Priority 1 (security/critical) and Priority 2 (architecture/Spec/boundary drift, including a Story AC left with zero corresponding test — see Spec & AC drift below). It does not comment on code-quality nits, style, general test quality, or coverage-percentage nitpicks. Keeping the signal blocking-only means every comment this agent produces demands action, and REQUEST_CHANGES always means something real is wrong — not "here's some polish." If your team wants a broader non-blocking quality/style/test-coverage pass, add a distinct agent for that rather than expanding this one's scope.
 
 ---
 
@@ -101,7 +101,7 @@ git diff origin/main...HEAD
 Review **each** relevant changed file through the tiers below, plus whichever project skills apply per Standards above.
 Every finding needs: **file:line** (or hunk), **severity**, **why**, **fix suggestion**, and its **origin** — baseline rubric or a specific skill file (e.g. `db-postgres`) — so the source of a rule stays traceable.
 
-Do **not** raise code-quality, style, or missing-test findings here — they are out of scope for this agent (see Scope note above), not merely deprioritized. This applies even if a loaded skill file contains style guidance: only its P1/P2-relevant rules apply here.
+Do **not** raise code-quality, style, or general missing-test findings here — they are out of scope for this agent (see Scope note above), not merely deprioritized. This applies even if a loaded skill file contains style guidance: only its P1/P2-relevant rules apply here. The one exception is AC test coverage under Spec & AC drift below: a Story AC with zero corresponding test is drift against the contract, not a style nit.
 
 ### Priority 1 — Security & critical (blocking)
 
@@ -127,6 +127,7 @@ Do **not** raise code-quality, style, or missing-test findings here — they are
 - Cache key/TTL/invalidation disagrees with Spec, if this project uses a cache
 - Queue/topic/key/payload/headers disagree with Spec, if this project uses async messaging
 - Behavior clearly fails a Gherkin AC in the linked story
+- A Story AC (Gherkin row) has no corresponding unit or integration test anywhere in the diff — cross-check each AC against the Tests-category files from Phase 1; untested behavior is unverified against the contract, not a style nit. (Judge by AC-to-test mapping, not raw coverage %— that's the build-verify gate's job, not this one's.)
 - Scope creep: changes unrelated to the stated story
 
 **12-factor (P2)**
@@ -153,6 +154,7 @@ Apply the rules from each loaded skill file, but only where they describe a P1 (
 - [ ] No secrets; OWASP basics held
 - [ ] Error mapping coherent frontend ↔ backend
 - [ ] Story scope only (no drive-by refactors)
+- [ ] Every Story AC has at least one corresponding test in the diff
 
 ---
 
