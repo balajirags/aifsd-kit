@@ -79,7 +79,8 @@ The Orchestrator's input (`docs/process.md`) is a **queue that can mix all of th
 4. **Wire it into your coding agent.** The kit is deliberately harness-agnostic — the one thing guaranteed to work everywhere is pointing your agent at a file directly ("follow `AGENTS.md`", or "follow `docs/team/developer.agent.md`"). Per-harness conveniences on top of that are optional and not part of the portable kit:
    - **Claude Code** — `CLAUDE.md` (`@AGENTS.md`) auto-loads every session; nothing else required. For a quick way to invoke one role ad hoc, you can add a `.claude/commands/<name>.md` slash command whose body is `@docs/team/<name>.agent.md` (or `@docs/discovery/<name>.agent.md`).
    - **GitHub Copilot** — point `.github/copilot-instructions.md` at `AGENTS.md`, or use Copilot's own prompt-file mechanism for individual roles.
-   - **OpenCode / Codex / others** — reference `AGENTS.md` via your harness's own instruction/config mechanism, or just tell the agent to read it at the start of a session.
+   - **OpenCode** — auto-loads `AGENTS.md` from the project root with zero config (it traverses upward from the working directory looking for `AGENTS.md`/`CLAUDE.md`); nothing else required.
+   - **Codex / other harnesses** — reference `AGENTS.md` via your harness's own instruction/config mechanism, or just tell the agent to read it at the start of a session.
 
    One distinction to keep in mind either way: `docs/discovery/*.agent.md` agents are sustained, human-in-the-loop sessions by design — don't dispatch them as isolated one-shot subagents, that defeats the point. `docs/team/*.agent.md` agents are closer to the opposite — Reviewer and QA specifically *require* a fresh, isolated session/subagent that never continues the Developer's conversation.
 
