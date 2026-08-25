@@ -50,6 +50,10 @@ Execution doesn't start on a subset. `architect.agent.md` runs a **Finalization 
 
 This project has its own engineering-standard skills (clean code, backend best practices, logging, security, db conventions, etc. — whichever this project needs), each a real [Agent Skills](https://agentskills.io/specification) `SKILL.md` per `docs/templates/skill.template.md`. Skills are agent-agnostic with no declared trigger — relevance is always judged by whichever agent is working, never forced or hardcoded to a phase. If your harness has a native skill mechanism (Claude Code, OpenCode, Pi, Codex all do), it discovers and surfaces relevant skills on its own from wherever that harness keeps them — none of the role files above need to know or say where. GitHub Copilot has no such mechanism; see that harness's own setup notes for how skills are handled there instead.
 
+## MCP servers (harness-configured, not authored here)
+
+This kit does not declare or generate MCP server configuration — that's your harness's own setup (Claude Code's `.mcp.json`, OpenCode's `opencode.json` → `mcp`, Codex's `.codex/config.toml`, Pi's `.mcp.json`, GitHub Copilot's `.mcp.json`/`.github/mcp.json`), the same way this file never says where skills live for a harness with native discovery. Whatever MCP servers your harness has configured (Jira, GitHub, Confluence, a database, Playwright, whatever this project or your environment needs), scan what's available at the start of a session and use whichever are relevant to the task at hand — the same judgment-call pattern as Skills above, just for tools instead of instructions. A role's own "Requires" line (e.g. developer/reviewer's "Jira or GitHub MCP tools (or equivalent)") names what that role typically needs, not an exhaustive or mandatory list — don't skip a relevant MCP tool just because a role file didn't name it, and don't treat a missing one as blocking if a documented fallback exists (e.g. local `git diff` instead of GitHub MCP, `docs/stories/**/*.md` instead of Jira MCP).
+
 Before any commit after code changes: run this project's build/lint/test commands as documented in `docs/project-context.md`.
 
 ## Documents
