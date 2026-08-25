@@ -20,6 +20,7 @@ Every run fully rebuilds the target `<harness>-kit/` directories from scratch (`
 Every `<harness>-kit/` gets the same core content:
 
 - `AGENTS.md` (rendered from `AGENTS-example.md`)
+- `README.md` — a self-contained, harness-specific "how to adopt this" guide (see `write_kit_readme` in `build-kit.sh`), since the receiving team only has this directory, not this source repo. It covers the same ground as "Taking a generated kit forward" below, so update both together if that section changes.
 - `docs/process.md`, `docs/team/*.agent.md`, `docs/templates/*.template.md`, `docs/discovery/*.agent.md`
 - A starter `docs/project-context.md` and `docs/architecture.md`, pre-seeded from their templates
 - Empty `docs/{prd,brd,specs,epics,stories,dev-checkpoints}/` directories (with a `.gitkeep`) so none of them are missed
@@ -43,6 +44,8 @@ Every skill ships into its harness's location (not just some subset), so relevan
 Every skill file needs valid YAML frontmatter with a non-empty `description` field — the same field the [Agent Skills spec](https://agentskills.io/specification) already requires, so there's nothing kit-specific to fill in. The script validates this up front for every skill before building anything, and fails loudly naming the offending file if one is missing. There's deliberately no "Owner," "Always load," or bespoke Meta-table field: ownership is a repo-level concern (CODEOWNERS, not per-file boilerplate), relevance is judged by the loading agent every time rather than flagged, and everything else lives in frontmatter now that these files are real `SKILL.md`s rather than a kit-invented shape.
 
 ## Taking a generated kit forward
+
+**This is also written as `README.md` inside every generated kit** — the version below is for browsing this source repo; the generated copy is what travels with the kit once it's copied elsewhere.
 
 Once you've run e.g. `./scripts/build-kit.sh opencode`:
 
