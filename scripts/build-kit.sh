@@ -43,7 +43,7 @@ mirror_skill() {
   slug=$(basename "$(dirname "$src")")
   dest_dir="$dest_root/$slug"
   mkdir -p "$dest_dir"
-  cp "$src" "$dest_dir/SKILL.md"
+  cp -R "$(dirname "$src")/." "$dest_dir/"
 }
 
 mirror_all_skills() {
