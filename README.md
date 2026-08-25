@@ -70,7 +70,7 @@ The Orchestrator's input (`docs/process.md`) is a **queue that can mix all of th
    - `docs/discovery/` — only if you want the optional PRD → BRD → Spec co-authoring agents (`to-prd`, `to-brd`, `architect`)
    - Do **not** copy `docs/example/` — it's a worked reference to read, not kit content (see its own README)
 
-   **Shortcut:** `scripts/build-kit.sh <harness>` (or run with no arguments for an interactive menu) generates a ready-to-copy `<harness>-kit/` directory at the repo root with these files pre-arranged for your harness — including native skill mirrors for Claude Code/OpenCode/Pi/Codex, a starter `docs/project-context.md`/`docs/architecture.md`, and the empty `docs/{prd,brd,specs,epics,stories,dev-checkpoints}/` folders — so copy that one directory into your project instead of assembling files by hand. Supported harness names: `claude`, `opencode`, `pi`, `copilot`, `codex`, or `all`.
+   **Shortcut:** `scripts/build-kit.sh <harness>` (or run with no arguments for an interactive menu) generates a ready-to-copy `<harness>-kit/` directory at the repo root with these files pre-arranged for your harness — including native skill mirrors for Claude Code/OpenCode/Pi/Codex, a starter `docs/project-context.md`/`docs/architecture.md`, a bundled `docs/example/` (same worked reference, for when the recipient only has the generated kit and not this source repo — delete it once used, per its own README), a self-contained `README.md`, and the empty `docs/{prd,brd,specs,epics,stories,dev-checkpoints}/` folders — so copy that one directory into your project instead of assembling files by hand. Supported harness names: `claude`, `opencode`, `pi`, `copilot`, `codex`, or `all`.
 
 2. **Fill in `docs/project-context.md`** — the single most important step. Copy it from `docs/templates/project-context.template.md` and fill in every section: your repository's GitHub URL and commit message format, your stack, source layout, conventions, build/lint/test commands, Quality Thresholds (coverage minima, and an optional mutation-score minimum), and — critically — your **Delivery Tracker** (`Jira` / `GitHub Issues` / `Local docs`), since every role file reads this to know where stories live and how status gets posted back. Use `docs/example/project-context.md` as a reference for the level of detail expected, not a value to copy.
 
@@ -103,7 +103,7 @@ The Orchestrator's input (`docs/process.md`) is a **queue that can mix all of th
 | `docs/architecture.md` | Optional system-wide HLD, produced/maintained by `architect.agent.md` |
 | `docs/skills/` | Your project's engineering-standard rules — only the skill location if hand-copied without a native skill mechanism; `scripts/build-kit.sh` relocates this to your harness's native folder instead |
 | `docs/dev-checkpoints/` | Developer's resumable per-story task checkpoints |
-| `docs/example/` | A fully filled-in worked instance — reference only, never copy into your repo |
+| `docs/example/` | A fully filled-in worked instance — reference only, never copy into your repo by hand. `scripts/build-kit.sh` does bundle it into generated kits for teams without access to this source repo — delete it once used either way |
 
 ## Keeping the kit healthy (living docs)
 

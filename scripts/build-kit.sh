@@ -60,6 +60,7 @@ build_common() {
   cp -R "$REPO_ROOT/docs/team" "$kit_dir/docs/"
   cp -R "$REPO_ROOT/docs/templates" "$kit_dir/docs/"
   cp -R "$REPO_ROOT/docs/discovery" "$kit_dir/docs/"
+  cp -R "$REPO_ROOT/docs/example" "$kit_dir/docs/"
   cp "$REPO_ROOT/docs/templates/project-context.template.md" "$kit_dir/docs/project-context.md"
   cp "$REPO_ROOT/docs/templates/architecture.template.md" "$kit_dir/docs/architecture.md"
   for d in prd brd specs epics stories dev-checkpoints; do
@@ -123,6 +124,8 @@ write_kit_readme() {
     printf '## 2. Fill in `docs/project-context.md`\n'
     printf '\n'
     printf 'The single most important step. It already exists here as a starter (copied from `docs/templates/project-context.template.md`) — fill in your stack, source layout, conventions, build/lint/test commands, Quality Thresholds, and your **Delivery Tracker** (`Jira` / `GitHub Issues` / `Local docs`). Every role file reads this to know where stories live and how status gets posted back.\n'
+    printf '\n'
+    printf 'A fully filled-in reference example (Java 21/Spring Boot + React/Vite/TypeScript + PostgreSQL/Redis/Kafka) ships at `docs/example/project-context.md` — read it for the level of detail expected, not as a value to copy. Delete `docs/example/` once you'"'"'re done with it (see its own README).\n'
     printf '\n'
     printf '## 3. Fill in `docs/architecture.md` (optional)\n'
     printf '\n'
