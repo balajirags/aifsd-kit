@@ -215,6 +215,52 @@ mirror_role_prompts_plain() {
   done
 }
 
+# GitHub Copilot's real per-persona mechanism: .github/agents/<name>.agent.md
+# — a single file format spanning VS Code's chat agent picker, the GitHub.com
+# cloud coding agent, and the Copilot CLI (docs.github.com/en/copilot/
+# reference/custom-agents-configuration). This isn't the SKILL.md-style skill
+# mechanism above (still absent in Copilot, per copilot-instructions.md) —
+# it's a distinct, genuinely native way to define a named persona with its
+# own model/tools, so unlike the earlier "Copilot has no native mechanism"
+# framing for skills, personas get real support here.
+# GitHub's docs don't document an isolation/fork concept for custom agents
+# the way Claude Code/OpenCode do, so no isolation claim is made here.
+# Discovery roles get `target: vscode`: the cloud coding agent is an
+# autonomous, PR-opening surface, a poor fit for a sustained human
+# co-authoring conversation; team roles are left valid on both surfaces
+# since e.g. Developer is a reasonable fit for the cloud agent too.
+write_copilot_role_agent() {
+  local dest_dir="$1" role_path="$2" vscode_only="$3" name desc
+  name=$(basename "$role_path" .agent.md)
+  desc=$(role_description "$name")
+  mkdir -p "$dest_dir"
+  {
+    printf -- '---\n'
+    printf 'name: %s\n' "$name"
+    printf 'description: %s\n' "$desc"
+    if [ "$vscode_only" = "vscode-only" ]; then
+      printf 'target: vscode\n'
+    fi
+    printf '# model: <model-id>   # optional: pin this role to a specific model — see your Copilot model picker for available IDs\n'
+    if [ "$name" = "reviewer" ]; then
+      printf '# tools: [...]   # optional: restrict to read-only tools to enforce reviewer.agent.md'"'"'s "never edit code" rule\n'
+    fi
+    printf -- '---\n'
+    printf '\n'
+    cat "$REPO_ROOT/$role_path"
+  } > "$dest_dir/$name.agent.md"
+}
+
+mirror_copilot_role_agents() {
+  local dest_dir="$1" f
+  for f in "${TEAM_ROLE_FILES[@]}"; do
+    write_copilot_role_agent "$dest_dir" "$f" ""
+  done
+  for f in "${DISCOVERY_ROLE_FILES[@]}"; do
+    write_copilot_role_agent "$dest_dir" "$f" vscode-only
+  done
+}
+
 build_common() {
   local kit_dir="$1" d
   mkdir -p "$kit_dir/docs"
@@ -270,7 +316,7 @@ write_kit_readme() {
     copilot)
       label="GitHub Copilot"
       skill_step='Add new skills directly at `docs/skills/<slug>/SKILL.md`, following the shape in `docs/templates/skill.template.md`. GitHub Copilot has no native skill-discovery mechanism, so `.github/copilot-instructions.md` (already generated for you) explicitly tells it to read these and apply whichever are relevant — that instruction only needs to exist once, not per skill.'
-      wiring_step='`.github/copilot-instructions.md` (already generated for you) points Copilot at `AGENTS.md` and explains the skills gap above — nothing else required.'
+      wiring_step='`.github/copilot-instructions.md` (already generated for you) points Copilot at `AGENTS.md` and explains the skills gap above — nothing else required for the default flow. For an ad hoc way to invoke one role directly, `.github/agents/<name>.agent.md` is already generated for every role (`ba`, `developer`, `reviewer`, `qa`, `to-prd`, `to-brd`, `architect`) — GitHub'"'"'s real custom-agent mechanism, spanning VS Code'"'"'s agent picker/`/agents` command, the GitHub.com cloud coding agent, and the Copilot CLI'"'"'s `/agent`/`--agent <name>` flag. Each has a commented `# model:` line to pin that role to a specific model; `reviewer` also has a commented `# tools:` line to restrict it toward read-only. `to-prd`/`to-brd`/`architect` set `target: vscode`, since the cloud coding agent is an autonomous, PR-opening surface — a poor fit for a sustained human co-authoring conversation.'
       ;;
     *) die "write_kit_readme: unknown harness: $harness" ;;
   esac
@@ -375,6 +421,7 @@ build_copilot() {
     printf 'Copilot has no native skill-discovery mechanism, unlike this kit'"'"'s other supported harnesses: read `docs/skills/*/SKILL.md` yourself and apply whichever are relevant to the current task — they are not surfaced automatically.\n'
   } > "$kit_dir/.github/copilot-instructions.md"
   mirror_all_skills "$kit_dir/docs/skills"
+  mirror_copilot_role_agents "$kit_dir/.github/agents"
   write_kit_readme "$kit_dir" copilot
   log "Built $kit_dir"
 }
