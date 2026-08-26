@@ -218,11 +218,11 @@ mirror_role_prompts_plain() {
 # GitHub Copilot's real per-persona mechanism: .github/agents/<name>.agent.md
 # — a single file format spanning VS Code's chat agent picker, the GitHub.com
 # cloud coding agent, and the Copilot CLI (docs.github.com/en/copilot/
-# reference/custom-agents-configuration). This isn't the SKILL.md-style skill
-# mechanism above (still absent in Copilot, per copilot-instructions.md) —
-# it's a distinct, genuinely native way to define a named persona with its
-# own model/tools, so unlike the earlier "Copilot has no native mechanism"
-# framing for skills, personas get real support here.
+# reference/custom-agents-configuration). This is a distinct mechanism from
+# Copilot's SKILL.md discovery (mirror_all_skills above, into .github/skills)
+# — a custom agent has no frontmatter field that references skill files
+# (verified against custom-agents-configuration docs); both are independently
+# native, neither implies the other.
 # GitHub's docs don't document an isolation/fork concept for custom agents
 # the way Claude Code/OpenCode do, so no isolation claim is made here.
 # Discovery roles get `target: vscode`: the cloud coding agent is an
@@ -315,8 +315,8 @@ write_kit_readme() {
       ;;
     copilot)
       label="GitHub Copilot"
-      skill_step='Add new skills directly at `docs/skills/<slug>/SKILL.md`, following the shape in `docs/templates/skill.template.md`. GitHub Copilot has no native skill-discovery mechanism, so `.github/copilot-instructions.md` (already generated for you) explicitly tells it to read these and apply whichever are relevant — that instruction only needs to exist once, not per skill.'
-      wiring_step='`.github/copilot-instructions.md` (already generated for you) points Copilot at `AGENTS.md` and explains the skills gap above — nothing else required for the default flow. For an ad hoc way to invoke one role directly, `.github/agents/<name>.agent.md` is already generated for every role (`ba`, `developer`, `reviewer`, `qa`, `to-prd`, `to-brd`, `architect`) — GitHub'"'"'s real custom-agent mechanism, spanning VS Code'"'"'s agent picker/`/agents` command, the GitHub.com cloud coding agent, and the Copilot CLI'"'"'s `/agent`/`--agent <name>` flag. Each has a commented `# model:` line to pin that role to a specific model; `reviewer` also has a commented `# tools:` line to restrict it toward read-only. `to-prd`/`to-brd`/`architect` set `target: vscode`, since the cloud coding agent is an autonomous, PR-opening surface — a poor fit for a sustained human co-authoring conversation.'
+      skill_step='Add new skills directly at `.github/skills/<slug>/SKILL.md`, following the shape in `docs/templates/skill.template.md`. GitHub Copilot discovers and judges relevance for them on its own (native Agent Skills support, added December 2025) — `docs/team/*.agent.md` never names a skill path and does not need to.'
+      wiring_step='`.github/copilot-instructions.md` (already generated for you) points Copilot at `AGENTS.md` — nothing else required for the default flow. For an ad hoc way to invoke one role directly, `.github/agents/<name>.agent.md` is already generated for every role (`ba`, `developer`, `reviewer`, `qa`, `to-prd`, `to-brd`, `architect`) — GitHub'"'"'s real custom-agent mechanism, spanning VS Code'"'"'s agent picker/`/agents` command, the GitHub.com cloud coding agent, and the Copilot CLI'"'"'s `/agent`/`--agent <name>` flag. Each has a commented `# model:` line to pin that role to a specific model; `reviewer` also has a commented `# tools:` line to restrict it toward read-only. `to-prd`/`to-brd`/`architect` set `target: vscode`, since the cloud coding agent is an autonomous, PR-opening surface — a poor fit for a sustained human co-authoring conversation.'
       ;;
     *) die "write_kit_readme: unknown harness: $harness" ;;
   esac
@@ -410,17 +410,20 @@ build_codex() {
   log "Built $kit_dir"
 }
 
+# GitHub added native Agent Skills support in December 2025 (see
+# github.blog/changelog/2025-12-18-github-copilot-now-supports-agent-skills) —
+# Copilot now auto-discovers SKILL.md files from .github/skills the same way
+# Claude Code/OpenCode/Pi/Codex discover their own native folder. Copilot is
+# no longer the one exception; only its lack of an AGENTS.md-reading default
+# (copilot-instructions.md still exists to point at that) remains harness-
+# specific here.
 build_copilot() {
   local kit_dir="$REPO_ROOT/copilot-kit"
   rm -rf "$kit_dir"
   build_common "$kit_dir"
   mkdir -p "$kit_dir/.github"
-  {
-    printf 'Follow `AGENTS.md` in this repo for delivery process, roles, and skills.\n'
-    printf '\n'
-    printf 'Copilot has no native skill-discovery mechanism, unlike this kit'"'"'s other supported harnesses: read `docs/skills/*/SKILL.md` yourself and apply whichever are relevant to the current task — they are not surfaced automatically.\n'
-  } > "$kit_dir/.github/copilot-instructions.md"
-  mirror_all_skills "$kit_dir/docs/skills"
+  printf 'Follow `AGENTS.md` in this repo for delivery process, roles, and skills.\n' > "$kit_dir/.github/copilot-instructions.md"
+  mirror_all_skills "$kit_dir/.github/skills"
   mirror_copilot_role_agents "$kit_dir/.github/agents"
   write_kit_readme "$kit_dir" copilot
   log "Built $kit_dir"
